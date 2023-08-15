@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SU.Domain.Dtos;
 using SU.Domain.Models;
 
 namespace SUAPI.Controllers
@@ -12,5 +13,73 @@ namespace SUAPI.Controllers
         {
             _SU = SU;
         }
+        [HttpPost]
+        [Route("AddComment")]
+        public ActionResult AddComment(int postId, [FromBody] NewCommentRequest commentreq)
+        {
+            if (postId != null)
+            {
+                var checkifpostexists = _SU.UserPosts.Where(x => x.Id == postId).Any();
+                var checkifuserexists = _SU.Users.Select(x => x.UserName == commentreq.CommenterName).FirstOrDefault();
+                if (checkifpostexists && checkifuserexists)
+                {
+                    Comment newComment = new Comment()
+                    {
+                        CommenterName = commentreq.CommenterName,
+                        CommentContent = commentreq.CommentContent,
+                        CommentDate = DateTime.Now,
+                        PostId = postId
+                    };
+                    _SU.Comments.Add(newComment);
+                    _SU.SaveChanges();
+                }
+                return Ok();
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+        [HttpPost]
+        [Route("EditComment")]
+        public ActionResult EditComment(int commentId, [FromBody] NewCommentRequest commentreq)
+        {
+            var checkifcommentexists = _SU.Comments.FirstOrDefault(x => x.CommentId == commentId);
+            if (checkifcommentexists != null && checkifcommentexists.CommentContent == commentreq.CommentContent)
+            {
+                checkifcommentexists.CommentContent = commentreq.CommentContent;
+                //try to add if the comment is sent or edited
+                checkifcommentexists.CommentDate = DateTime.Now;
+                _SU.SaveChanges();
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        [HttpGet]
+        [Route("GetAllMyCommentedPosts")]
+        public List<Comment> GetComments(string userName)
+        {
+            try
+            {
+                return _SU.Comments.Where(x => x.CommenterName == userName).ToList();
+            }
+            catch (Exception)
+            {
+                return new List<Comment>();
+            }
+
+        }
     }
 }
+
+
+
+
+
+
+
+
+

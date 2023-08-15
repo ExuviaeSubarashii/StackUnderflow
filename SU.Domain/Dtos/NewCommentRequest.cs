@@ -1,8 +1,7 @@
-﻿namespace SU.Domain.Models
+﻿namespace SU.Domain.Dtos
 {
-    public partial class Comment
+    public class NewCommentRequest
     {
-        public int CommentId { get; set; }
         public int PostId { get; set; }
         public string CommenterName { get; set; } = null;
         public DateTime CommentDate { get; set; }

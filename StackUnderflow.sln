@@ -3,13 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34003.232
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SUClient", "SUClient\SUClient.csproj", "{D69B6F8D-AA86-42D5-B470-94F20F46CF15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SUClient", "SUClient\SUClient.csproj", "{D69B6F8D-AA86-42D5-B470-94F20F46CF15}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{8137FC13-C6B0-425C-B99B-3B9079173550}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SU.Domain", "SU.Domain\SU.Domain.csproj", "{9E7E5C10-05A1-4AA5-A347-A464CB246D0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SU.Domain", "SU.Domain\SU.Domain.csproj", "{9E7E5C10-05A1-4AA5-A347-A464CB246D0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SUAPI", "SU.API\SUAPI.csproj", "{4B1EAC98-04A8-4C60-8905-A17D327ED145}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SUAPI", "SU.API\SUAPI.csproj", "{4B1EAC98-04A8-4C60-8905-A17D327ED145}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{A11B8D40-6A21-495E-B310-88AD9ACF6FB2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SU.Service", "SU.Service\SU.Service.csproj", "{A9C28DBA-4E49-4472-8C1F-320F31AEEAD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,12 +33,17 @@ Global
 		{4B1EAC98-04A8-4C60-8905-A17D327ED145}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B1EAC98-04A8-4C60-8905-A17D327ED145}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B1EAC98-04A8-4C60-8905-A17D327ED145}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9C28DBA-4E49-4472-8C1F-320F31AEEAD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9C28DBA-4E49-4472-8C1F-320F31AEEAD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9C28DBA-4E49-4472-8C1F-320F31AEEAD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9C28DBA-4E49-4472-8C1F-320F31AEEAD0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9E7E5C10-05A1-4AA5-A347-A464CB246D0E} = {8137FC13-C6B0-425C-B99B-3B9079173550}
+		{A9C28DBA-4E49-4472-8C1F-320F31AEEAD0} = {A11B8D40-6A21-495E-B310-88AD9ACF6FB2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3231C100-C7A1-42DB-BA0C-51B64ADF2FCE}
