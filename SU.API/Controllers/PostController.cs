@@ -22,9 +22,15 @@ namespace SUAPI.Controllers
         {
             return new JsonResult(_SU.UserPosts.Where(x => x.PosterName == userName).ToList());
         }
+        [HttpGet("questions")]
+        public async Task<ActionResult> Questions(int postId)
+        {
+            return new JsonResult(_SU.UserPosts.FirstOrDefault(x => x.Id == postId));
+        }
+
         [HttpPost]
         [Route("NewPost")]
-        public ActionResult AddNewPost(NewPostRequest request)
+        public async Task<ActionResult> AddNewPost(NewPostRequest request)
         {
             UserPost newPost = new UserPost()
             {

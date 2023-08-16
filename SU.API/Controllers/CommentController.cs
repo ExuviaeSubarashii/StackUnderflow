@@ -70,8 +70,21 @@ namespace SUAPI.Controllers
             {
                 return new List<Comment>();
             }
-
         }
+        [HttpGet("PostSpecificComments")]
+        public List<Comment> PostSpecificComments(int postId)
+        {
+            try
+            {
+                return _SU.Comments.Where(x => x.PostId == postId).ToList();
+            }
+            catch (Exception)
+            {
+                return new List<Comment>();
+            }
+        }
+
+
     }
 }
 

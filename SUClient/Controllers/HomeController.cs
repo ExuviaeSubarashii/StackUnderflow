@@ -32,6 +32,9 @@ namespace SUClient.Controllers
         {
             return View("GoToUserProfile");
         }
-
+        public IActionResult Questions()
+        {
+            return View("Questions");
+        }
     }
 }

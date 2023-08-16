@@ -20,12 +20,12 @@ function GetAllQuestions() {
                 var contentBody = document.createElement('div');
                 contentBody.textContent = item.mainContent;
                 var posthref = document.createElement('a');
-                posthref.href = "".concat(baseURL, "/questions/").concat(item.id);
+                posthref.href = "/Home/Questions?postId=".concat(encodeURIComponent(item.id));
                 posthref.textContent = "Link to Question";
                 var userCard = document.createElement('div');
                 userCard.classList.add('userCard');
                 var userHref = document.createElement('a');
-                userHref.href = "/Home/GoToUserProfile?username=".concat(encodeURIComponent(item.posterName));
+                userHref.href = "/Home/GoToUserProfile?username=".concat(encodeURIComponent(item.posterName.trim()));
                 userHref.textContent = item.posterName;
                 var postDate = document.createElement('p');
                 postDate.textContent = item.postDate;
@@ -79,5 +79,97 @@ function GetUserDetails() {
         .catch(function (error) {
         console.error('Error occurred while sending the request:', error);
     });
+}
+function GetQuestionPost() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var postId = urlParams.get('postId');
+    var postContent = document.getElementById("post-content");
+    fetch("".concat(baseURL, "/Post/questions") + '?postId=' + postId, {
+        method: 'GET',
+    })
+        .then(function (response) {
+        if (response.ok) {
+            // Request was successful
+            return response.json(); // Parse the response as JSON
+        }
+        else {
+            // Request failed
+            throw new Error(response.statusText);
+        }
+    })
+        .then(function (item) {
+        console.log('Received data:', item); // Debugging line
+        var questionSummary = document.createElement('div');
+        questionSummary.setAttribute('id', 'question-summary-' + item.id);
+        var contentTitle = document.createElement('h3');
+        contentTitle.textContent = item.header;
+        var contentBody = document.createElement('div');
+        contentBody.textContent = item.mainContent;
+        var userCard = document.createElement('div');
+        userCard.classList.add('userCard');
+        var userHref = document.createElement('a');
+        userHref.href = "/Home/GoToUserProfile?username=".concat(encodeURIComponent(item.posterName.trim()));
+        userHref.textContent = item.posterName;
+        var postDate = document.createElement('p');
+        postDate.textContent = item.postDate;
+        questionSummary.classList.add('questionSummary');
+        contentTitle.classList.add('contentTitle');
+        contentBody.classList.add('contentBody');
+        userCard.classList.add('userCard');
+        userHref.classList.add('userHref');
+        postDate.classList.add('postDate');
+        questionSummary.appendChild(contentTitle);
+        questionSummary.appendChild(contentBody);
+        questionSummary.appendChild(userCard);
+        userCard.appendChild(userHref);
+        questionSummary.appendChild(postDate);
+        postContent.appendChild(questionSummary);
+    })
+        .catch(function (error) {
+        console.error('Error occurred while sending the request:', error);
+    });
+}
+function PostSpecificComments() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var postId = urlParams.get('postId');
+    var commentContent = document.getElementById("comment-content");
+    fetch("".concat(baseURL, "/Comment/PostSpecificComments") + '?postId=' + postId, {
+        method: 'GET',
+    })
+        .then(function (response) {
+        if (response.ok) {
+            // Request was successful
+            return response.json(); // Parse the response as JSON
+        }
+        else {
+            // Request failed
+            throw new Error(response.statusText);
+        }
+    })
+        .then(function (data) {
+        data.forEach(function (item) {
+            console.log('Received data:', item);
+            var contentBody = document.createElement('div');
+            contentBody.textContent = item.commentContent;
+            var userCard = document.createElement('div');
+            userCard.classList.add('userCard');
+            var userHref = document.createElement('a');
+            userHref.href = "/Home/GoToUserProfile?username=".concat(encodeURIComponent(item.commenterName.trim()));
+            userHref.textContent = item.commenterName;
+            var commentDate = document.createElement('div');
+            commentDate.textContent = item.commentDate;
+            userCard.appendChild(userHref);
+            commentContent.appendChild(contentBody);
+            commentContent.appendChild(userCard);
+            commentContent.appendChild(commentDate);
+        });
+    })
+        .catch(function (error) {
+        console.error('Error:', error);
+    });
+}
+function doboth() {
+    GetQuestionPost();
+    PostSpecificComments();
 }
 //# sourceMappingURL=app.js.map
