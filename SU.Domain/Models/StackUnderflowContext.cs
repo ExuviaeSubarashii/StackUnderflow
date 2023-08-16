@@ -47,7 +47,7 @@ namespace SU.Domain.Models
 
             modelBuilder.Entity<Users>(entity =>
             {
-                entity.ToTable("User");
+                entity.ToTable("Users");
 
                 entity.Property(e => e.HashPassword).IsUnicode(false);
 

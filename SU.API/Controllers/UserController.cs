@@ -49,5 +49,26 @@ namespace SUAPI.Controllers
                 return Ok();
             }
         }
+        [HttpGet]
+        [Route("GoToUserProfile")]
+        public ActionResult GoToUserProfile(string username)
+        {
+            var doesuserexist = _SU.Users.Any(x => x.UserName == username);
+            if (doesuserexist)
+            {
+                var query = _SU.Users.Where(Users => Users.UserName == username).FirstOrDefault();
+                UserDTO userDTO = new UserDTO()
+                {
+                    Id = query.Id,
+                    UserName = query.UserName,
+                    RegisterDate = query.RegisterDate
+                };
+                return new JsonResult(userDTO);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
     }
 }
