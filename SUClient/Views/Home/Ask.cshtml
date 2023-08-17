@@ -1,0 +1,71 @@
+﻿<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    header {
+        background-color: #002255;
+        color: white;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .container {
+        width: 80%;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    input[type="text"], textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    button {
+        background-color: #f48024;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    } 
+</style>
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<div class="container">
+    
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" placeholder="Enter your question title">
+
+        <label for="tags">Tags</label>
+        <input type="text" id="tags" name="tags" placeholder="Enter tags separated by commas">
+
+        <label for="body">Body</label>
+        <div>
+            <div id="text-stuff">
+            <button id="button-heading"><i class='bx bx-heading'></i></button>
+            <button id="button-bold"><i class='bx bx-bold'></i></button>
+            <button id="button-italic"><i class='bx bx-italic'></i></button>
+            <button id="button-codealt"><i class='bx bx-code-alt'></i></button>
+            <button id="button-link"><i class='bx bx-link'></i></button>
+            </div>
+        <textarea id="body" name="body" rows="8" placeholder="Enter your question here"></textarea>
+        </div>
+        <button type="submit">Post Your Question</button>
+    
+</div>

@@ -36,5 +36,23 @@ namespace SUClient.Controllers
         {
             return View("Questions");
         }
+        public IActionResult Ask()
+        {
+            return View("Ask");
+        }
+        //[HttpPost]
+        //[AllowAnonymous]
+        //public async Task<IActionResult> Login([FromBody] LoginRequest LR)
+        //{
+        //    if (LR != null)
+        //    {
+        //        var responseContent = await HttpHelper.httpClient.PostAsync("/api/Auth/AuthUser", new StringContent(System.Text.Json.JsonSerializer.Serialize(LR), Encoding.UTF8, "application/json")).Result.Content.ReadAsStringAsync();
+        //        return View("Ask");
+        //    }
+        //    else
+        //    {
+        //        return BadRequest();
+        //    }
+        //}
     }
 }
