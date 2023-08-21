@@ -6,13 +6,10 @@ var User = /** @class */ (function () {
 var user = new User();
 function AuthUserAutomatically() {
     var isLoggedIn = localStorage.getItem('isLoggedIn');
-    var userloginname = document.querySelector('.userloginname');
-    var loginpagebutton = document.getElementById('.loginpagebutton');
     var userEmail = localStorage.getItem('userEmail');
-    loginpagebutton.disabled = true;
     var user = {
-        userEmail: localStorage.getItem('userEmail'),
-        password: localStorage.getItem('userPassword')
+        userEmail: localStorage.getItem('userEmail').replace(/\\|"/g, ''),
+        password: localStorage.getItem('userPassword').replace(/\\|"/g, '')
     };
     var requestOptions = {
         method: 'POST',
@@ -23,21 +20,11 @@ function AuthUserAutomatically() {
     };
     fetch("".concat(baseURL, "/User/Login"), requestOptions)
         .then(function (response) {
-        if (response.ok) {
-            window.location.href = '/Home/Ask';
-            return response.json();
-        }
-        else {
-            throw new Error(response.statusText);
-        }
-    })
-        .then(function (response) {
-        if (response.ok) {
-            window.location.href = '/Home/Questions';
-        }
-        else {
+        if (!response.ok) {
             window.location.href = '/Home/LoginPage';
-            throw new Error(response.statusText);
+        }
+        else {
+            console.log('succesfull');
         }
     });
 }
@@ -91,10 +78,10 @@ function GoToAskPage() {
     }
 }
 function logout() {
-    //localStorage.removeItem('userEmail');
-    //localStorage.removeItem('userName');
-    //localStorage.removeItem('userPassword');
-    //localStorage.setItem('isLoggedIn', "false");
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userPassword');
+    localStorage.setItem('isLoggedIn', "false");
     var userEmail = localStorage.getItem('userEmail');
     var userName = localStorage.getItem('userName');
     var userPassword = localStorage.getItem('userPassword');
