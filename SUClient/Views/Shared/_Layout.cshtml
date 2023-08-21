@@ -26,12 +26,18 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Log in</a>
+                            <a class="nav-link text-dark" asp-area="" id="loginpagebutton" asp-controller="Home" asp-action="LoginPage">Log in</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Sign Up</a>
                         </li>
+                        <button onclick="logout()">
+                            clear
+                        </button>
                     </ul>
+                        <p id="userloginname">
+                            
+                        </p>
                 </div>
             </div>
         </nav>
@@ -57,6 +63,7 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/app.js" asp-append-version="true"></script>
     <script src="~/js/ask.js" asp-append-version="true"></script>
+    <script src="~/js/user.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

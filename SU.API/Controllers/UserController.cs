@@ -19,9 +19,11 @@ namespace SUAPI.Controllers
         {
             var loginQuery = _SU.Users.Select(x => x.UserName == request.UserName || x.UserEmail == request.UserEmail && x.Password == request.Password).FirstOrDefault();
 
+            var amogyQuery = _SU.Users.Where(x => x.UserName == request.UserName || x.UserEmail == request.UserEmail && x.Password == request.Password).FirstOrDefault();
+
             if (loginQuery)
             {
-                return Ok();
+                return Ok(amogyQuery.UserName);
             }
             else
             {
