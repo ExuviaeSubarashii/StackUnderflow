@@ -91,12 +91,46 @@ function logout() {
     localStorage.removeItem('userName');
     localStorage.removeItem('userPassword');
     localStorage.setItem('isLoggedIn', "false");
-    var userEmail = localStorage.getItem('userEmail');
-    var userName = localStorage.getItem('userName');
-    var userPassword = localStorage.getItem('userPassword');
-    var isLoggedIn = localStorage.getItem('isLoggedIn');
-    console.log(userEmail);
-    console.log(userName);
-    console.log(userPassword);
-    console.log(isLoggedIn);
+    //var userEmail = localStorage.getItem('userEmail');
+    //var userName = localStorage.getItem('userName');
+    //var userPassword = localStorage.getItem('userPassword');
+    //var isLoggedIn = localStorage.getItem('isLoggedIn');
+    //console.log(userEmail);
+    //console.log(userName);
+    //console.log(userPassword);
+    //console.log(isLoggedIn);
 }
+
+
+function amogus() {
+
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    const userEmail = localStorage.getItem('userEmail');
+    const userPassword = localStorage.getItem('password');
+
+    SetCookie("amogus", userEmail);
+}
+function amogus2() {
+    let amogusta = getCookie("amogus");
+    console.log(amogusta);
+}
+function SetCookie(cookiename: string, value: string) {
+    const cookieValue = `${cookiename}=${value}; path=/`;
+    document.cookie = cookieValue;
+}
+
+function getCookie(name: string): string | null {
+    const cookies = document.cookie.split('; ');
+
+    for (const cookie of cookies) {
+        const [cookieName, cookieValue] = cookie.split('=');
+        if (cookieName === name) {
+            return decodeURIComponent(cookieValue);
+        }
+    }
+    return null;
+}
+function deleteCookie(name: string) {
+    document.cookie = `${name}=; path=/;`;
+}
+
