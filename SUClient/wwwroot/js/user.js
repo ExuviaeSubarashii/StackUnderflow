@@ -6,27 +6,31 @@ var User = /** @class */ (function () {
 var user = new User();
 function AuthUserAutomatically() {
     var isLoggedIn = localStorage.getItem('isLoggedIn');
-    var userEmail = localStorage.getItem('userEmail');
-    var user = {
-        userEmail: localStorage.getItem('userEmail').replace(/\\|"/g, ''),
-        password: localStorage.getItem('userPassword').replace(/\\|"/g, '')
-    };
-    var requestOptions = {
-        method: 'POST',
-        body: JSON.stringify(user),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-    fetch("".concat(baseURL, "/User/Login"), requestOptions)
-        .then(function (response) {
-        if (!response.ok) {
-            window.location.href = '/Home/LoginPage';
-        }
-        else {
-            console.log('succesfull');
-        }
-    });
+    if (isLoggedIn == "true") {
+        var user_1 = {
+            userEmail: localStorage.getItem('userEmail').replace(/\\|"/g, ''),
+            password: localStorage.getItem('userPassword').replace(/\\|"/g, '')
+        };
+        var requestOptions = {
+            method: 'POST',
+            body: JSON.stringify(user_1),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+        fetch("".concat(baseURL, "/User/Login"), requestOptions)
+            .then(function (response) {
+            if (!response.ok) {
+                window.location.href = '/Home/LoginPage';
+            }
+            else {
+                console.log('succesfull');
+            }
+        });
+    }
+    else {
+        window.location.href = '/Home/LoginPage';
+    }
 }
 function login() {
     var userEmailInput = document.getElementById('userEmail');
@@ -45,19 +49,19 @@ function login() {
     fetch("".concat(baseURL, "/User/Login"), requestOptions)
         .then(function (response) {
         if (response.ok) {
+            window.location.href = '/';
             localStorage.setItem('userEmail', JSON.stringify(user.userEmail));
             localStorage.setItem('userPassword', JSON.stringify(user.password));
             localStorage.setItem('isLoggedIn', "true");
-            window.location.href = '';
-            return response.json();
+            /*return response.json();*/
         }
         else {
             throw new Error(response.statusText);
         }
     })
-        .then(function (data) {
-        localStorage.setItem('userName', JSON.stringify(data.Username));
-    })
+        //.then(data => {
+        //    localStorage.setItem('username', JSON.stringify(data.Username));
+        //})
         .catch(function (error) {
         console.error('Error occurred while sending the request:', error);
     });
@@ -68,9 +72,6 @@ function GoToAskPage() {
     var userPassword = localStorage.getItem('userPassword');
     var isLoggedIn = localStorage.getItem('isLoggedIn');
     if (isLoggedIn == "true") {
-        console.log(userEmail);
-        console.log(userName);
-        console.log(userPassword);
         window.location.href = '/Home/Ask';
     }
     else {
@@ -82,41 +83,24 @@ function logout() {
     localStorage.removeItem('userName');
     localStorage.removeItem('userPassword');
     localStorage.setItem('isLoggedIn', "false");
-    //var userEmail = localStorage.getItem('userEmail');
-    //var userName = localStorage.getItem('userName');
-    //var userPassword = localStorage.getItem('userPassword');
-    //var isLoggedIn = localStorage.getItem('isLoggedIn');
-    //console.log(userEmail);
-    //console.log(userName);
-    //console.log(userPassword);
-    //console.log(isLoggedIn);
 }
-function amogus() {
+function GoToLoginPage() {
     var isLoggedIn = localStorage.getItem('isLoggedIn');
-    var userEmail = localStorage.getItem('userEmail');
-    var userPassword = localStorage.getItem('password');
-    SetCookie("amogus", userEmail);
-}
-function amogus2() {
-    var amogusta = getCookie("amogus");
-    console.log(amogusta);
-}
-function SetCookie(cookiename, value) {
-    var cookieValue = "".concat(cookiename, "=").concat(value, "; path=/");
-    document.cookie = cookieValue;
-}
-function getCookie(name) {
-    var cookies = document.cookie.split('; ');
-    for (var _i = 0, cookies_1 = cookies; _i < cookies_1.length; _i++) {
-        var cookie = cookies_1[_i];
-        var _a = cookie.split('='), cookieName = _a[0], cookieValue = _a[1];
-        if (cookieName === name) {
-            return decodeURIComponent(cookieValue);
-        }
+    if (isLoggedIn === "false") {
+        window.location.href = '/Home/LoginPage';
     }
-    return null;
+    else {
+        window.location.href = '';
+    }
 }
-function deleteCookie(name) {
-    document.cookie = "".concat(name, "=; path=/;");
+function ShowLocalStorage() {
+    var userEmail = localStorage.getItem('userEmail');
+    var userName = localStorage.getItem('userName');
+    var userPassword = localStorage.getItem('userPassword');
+    var isLoggedIn = localStorage.getItem('isLoggedIn');
+    console.log("userEmail   " + userEmail);
+    console.log("userName    " + userName);
+    console.log("userPassword " + userPassword);
+    console.log("isLoggedIn  " + isLoggedIn);
 }
 //# sourceMappingURL=user.js.map

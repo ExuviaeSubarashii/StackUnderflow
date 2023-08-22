@@ -25,19 +25,23 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" id="loginpagebutton" asp-controller="Home" asp-action="LoginPage">Log in</a>
-                        </li>
+                        <button class="nav-item">
+                            <a class="nav-link text-dark" id="loginpagebutton" onclick="GoToLoginPage()">Log in</a>
+                        </button>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Sign Up</a>
                         </li>
-                        <button onclick="logout()">
-                            clear
-                        </button>
+                      
                     </ul>
                         <p id="userloginname">
                             
                         </p>
+                    <button onclick="logout()">
+                        clear
+                    </button>
+                    <button onclick="ShowLocalStorage()">
+                        show
+                    </button>
                 </div>
             </div>
         </nav>
@@ -64,6 +68,7 @@
     <script src="~/js/app.js" asp-append-version="true"></script>
     <script src="~/js/ask.js" asp-append-version="true"></script>
     <script src="~/js/user.js" asp-append-version="true"></script>
+    <script src="~/js/user2.js" asp-append-version="true"></script>
     
 
     @await RenderSectionAsync("Scripts", required: false)
