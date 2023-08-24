@@ -23,16 +23,32 @@ function AuthUserAutomatically() {
         fetch(`${baseURL}/User/Login`, requestOptions)
             .then(response => {
                 if (!response.ok) {
+                    // If login is not successful, redirect to login page
                     window.location.href = '/Home/LoginPage';
-
                 }
                 else {
-                    console.log('succesfull');
+                    // If login is successful, hide the buttons
+
+                    document.getElementById('loginpagebutton').style.display = 'none';
+                    document.getElementById('registerpagebutton').style.display = 'none';
+                    console.log('Successful login');
                 }
             })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     }
     else {
+        // If user is not logged in, redirect to login page
         window.location.href = '/Home/LoginPage';
+    }
+}
+function AuthUserKindaAutomatically() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+    if (isLoggedIn == "true") {
+        document.getElementById('loginpagebutton').style.display = 'none';
+        document.getElementById('registerpagebutton').style.display = 'none';
     }
 }
 function login() {
@@ -59,23 +75,20 @@ function login() {
                 localStorage.setItem('userEmail', JSON.stringify(user.userEmail));
                 localStorage.setItem('userPassword', JSON.stringify(user.password));
                 localStorage.setItem('isLoggedIn', "true");
-                /*return response.json();*/
+                return response.json();
             } else {
                 throw new Error(response.statusText);
             }
         })
-        //.then(data => {
-        //    localStorage.setItem('username', JSON.stringify(data.Username));
-        //})
+        .then(data => {
+            localStorage.setItem('username', JSON.stringify(data.Username));
+        })
         .catch(error => {
             console.error('Error occurred while sending the request:', error);
         });
 
 }
 function GoToAskPage() {
-    const userEmail = localStorage.getItem('userEmail');
-    const userName = localStorage.getItem('userName');
-    const userPassword = localStorage.getItem('userPassword');
     const isLoggedIn = localStorage.getItem('isLoggedIn');
     if (isLoggedIn == "true") {
         window.location.href = '/Home/Ask';

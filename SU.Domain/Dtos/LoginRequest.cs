@@ -6,7 +6,7 @@
         public string? UserName { get; set; } = null!;
         public string Password { get; set; } = null!;
 
-        public string? RefreshToken { get; set; } = string.Empty;
+        public string? Token { get; set; } = string.Empty;
         public DateTime? TokenCreated { get; set; }
         public DateTime? TokenExpires { get; set; }
     }

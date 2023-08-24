@@ -8,5 +8,6 @@
         public byte[]? Image { get; set; }
         public DateTime PostDate { get; set; }
         public string PosterName { get; set; } = null!;
+        public string Tags { get; set; } = null!;
     }
 }

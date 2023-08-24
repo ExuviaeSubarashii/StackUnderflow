@@ -15,11 +15,11 @@ namespace SUAPI.Controllers
         }
         [HttpPost]
         [Route("AddComment")]
-        public ActionResult AddComment(int postId, [FromBody] NewCommentRequest commentreq)
+        public ActionResult AddComment([FromBody] NewCommentRequest commentreq)
         {
-            if (postId != null)
+            if (commentreq.PostId != null)
             {
-                var checkifpostexists = _SU.UserPosts.Where(x => x.Id == postId).Any();
+                var checkifpostexists = _SU.UserPosts.Where(x => x.Id == commentreq.PostId).Any();
                 var checkifuserexists = _SU.Users.Select(x => x.UserName == commentreq.CommenterName).FirstOrDefault();
                 if (checkifpostexists && checkifuserexists)
                 {
@@ -28,7 +28,7 @@ namespace SUAPI.Controllers
                         CommenterName = commentreq.CommenterName,
                         CommentContent = commentreq.CommentContent,
                         CommentDate = DateTime.Now,
-                        PostId = postId
+                        PostId = commentreq.PostId
                     };
                     _SU.Comments.Add(newComment);
                     _SU.SaveChanges();

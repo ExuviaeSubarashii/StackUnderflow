@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace SU.Domain.Models
+﻿namespace SU.Domain.Models
 {
     public partial class UserPost
     {
@@ -11,5 +8,6 @@ namespace SU.Domain.Models
         public byte[]? Image { get; set; }
         public DateTime PostDate { get; set; }
         public string PosterName { get; set; } = null!;
+        public string Tags { get; set; } = null!;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SU.Domain.Dtos;
 using SU.Domain.Models;
 
@@ -15,34 +16,57 @@ namespace SUAPI.Controllers
         }
         [HttpGet]
         [Route("GetAllPosts")]
-        public JsonResult GetAllPosts() { return new JsonResult(_SU.UserPosts.ToList()); }
+        public async Task<ActionResult> GetAllPosts()
+        {
+            var gap = await _SU.UserPosts.ToListAsync();
+            return new JsonResult(gap);
+        }
         [HttpGet]
         [Route("GetAllMyPosts")]
-        public JsonResult GetAllMyPosts(string userName)
+        public async Task<ActionResult> GetAllMyPosts(string userName)
         {
-            return new JsonResult(_SU.UserPosts.Where(x => x.PosterName == userName).ToList());
+            var userPosts = await _SU.UserPosts.Where(x => x.PosterName == userName).ToListAsync();
+            return new JsonResult(userPosts);
         }
         [HttpGet("questions")]
         public async Task<ActionResult> Questions(int postId)
         {
-            return new JsonResult(_SU.UserPosts.FirstOrDefault(x => x.Id == postId));
+            var post = await _SU.UserPosts.FirstOrDefaultAsync(x => x.Id == postId);
+
+            if (post != null)
+            {
+                return new JsonResult(post);
+            }
+            else
+            {
+                return NotFound(); // Return a 404 response if the post is not found
+            }
         }
+
 
         [HttpPost]
         [Route("NewPost")]
-        public async Task<ActionResult> AddNewPost(NewPostRequest request)
+        public ActionResult AddNewPost(NewPostRequest request)
         {
-            UserPost newPost = new UserPost()
+            if (request != null)
             {
-                Header = request.Header,
-                Image = request.Image,
-                MainContent = request.MainContent,
-                PostDate = DateTime.Now,
-                PosterName = request.PosterName,
-            };
-            _SU.UserPosts.Add(newPost);
-            _SU.SaveChanges();
-            return Ok();
+                UserPost newPost = new UserPost()
+                {
+                    Header = request.Header,
+                    Image = request.Image,
+                    MainContent = request.MainContent,
+                    PostDate = DateTime.Now,
+                    PosterName = request.PosterName,
+                    Tags = request.Tags,
+                };
+                _SU.UserPosts.Add(newPost);
+                _SU.SaveChanges();
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
     }
 }

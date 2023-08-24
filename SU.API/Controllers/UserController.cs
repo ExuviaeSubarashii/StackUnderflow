@@ -4,7 +4,6 @@ using SU.Domain.Dtos;
 using SU.Domain.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 
 namespace SUAPI.Controllers
 {
@@ -19,10 +18,9 @@ namespace SUAPI.Controllers
             _SU = SU;
             _config = configuration;
         }
-        public static LoginRequest user = new LoginRequest();
         [HttpPost]
         [Route("Login")]
-        public ActionResult Login([FromBody] LoginRequest request)
+        public async Task<ActionResult> Login([FromBody] LoginRequest request)
         {
             var loginQuery = _SU.Users.Select(x => x.UserName == request.UserName || x.UserEmail == request.UserEmail && x.Password == request.Password).FirstOrDefault();
 
@@ -31,79 +29,23 @@ namespace SUAPI.Controllers
             if (loginQuery)
             {
                 string token = CreateToken(request);
-                var refreshToken = GenerateRefreshToken();
-                SetRefreshToken(refreshToken);
-                return new JsonResult(token);
+                LoginRequest returnLogin = new LoginRequest()
+                {
+                    UserName = amogyQuery.UserName,
+                    Token = token,
+                };
+                return new JsonResult(returnLogin);
             }
             else
             {
                 return NotFound();
             }
-        }
-        [HttpPost]
-        [Route("Login2")]
-        public ActionResult Login2([FromBody] LoginRequest request)
-        {
-            var loginQuery = _SU.Users.Select(x => x.UserName == request.UserName || x.UserEmail == request.UserEmail && x.Password == request.Password).FirstOrDefault();
-
-            if (loginQuery)
-            {
-                string token = CreateToken(request);
-
-                var refreshToken = GenerateRefreshToken();
-                SetRefreshToken(refreshToken);
-                return new JsonResult(token);
-            }
-            else
-            {
-                return NotFound();
-            }
-        }
-        [HttpPost("refresh-token")]
-        public ActionResult<string> RefreshToken(string utoken)
-        {
-            var refreshToken = Request.Cookies["refreshtoken"];
-
-            if (!user.RefreshToken.Equals(refreshToken))
-            {
-                return Unauthorized("Invalid Refresh Token.");
-            }
-            else if (user.TokenExpires < DateTime.Now)
-            {
-                return Unauthorized("Token Expired");
-            }
-            string token = CreateToken(user);
-            var newRefreshToken = GenerateRefreshToken();
-            SetRefreshToken(newRefreshToken);
-            return Ok(token);
-        }
-        private RefreshToken GenerateRefreshToken()
-        {
-            var refreshToken = new RefreshToken()
-            {
-                Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-                Expires = DateTime.Now.AddDays(7),
-                Created = DateTime.Now
-            };
-            return refreshToken;
-        }
-        private void SetRefreshToken(RefreshToken newRefreshToken)
-        {
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = newRefreshToken.Expires
-            };
-            Response.Cookies.Append("refreshToken", newRefreshToken.Token, cookieOptions);
-            user.RefreshToken = newRefreshToken.Token;
-            user.TokenCreated = newRefreshToken.Created;
-            user.TokenExpires = newRefreshToken.Expires;
         }
         public string CreateToken(LoginRequest request)
         {
             List<Claim> claims = new List<Claim>();
             {
-                new Claim(ClaimTypes.Name, request.UserEmail, request.Password);
+                _ = new Claim(ClaimTypes.Name, request.UserEmail, request.Password);
             }
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
@@ -140,12 +82,12 @@ namespace SUAPI.Controllers
         }
         [HttpGet]
         [Route("GoToUserProfile")]
-        public ActionResult GoToUserProfile(string username)
+        public ActionResult GoToUserProfile(string username, Users? query)
         {
             var doesuserexist = _SU.Users.Any(x => x.UserName == username);
             if (doesuserexist)
             {
-                var query = _SU.Users.Where(Users => Users.UserName == username).FirstOrDefault();
+                query = _SU.Users.Where(Users => Users.UserName == username).FirstOrDefault();
                 UserDTO userDTO = new UserDTO()
                 {
                     Id = query.Id,

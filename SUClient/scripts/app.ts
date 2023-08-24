@@ -1,4 +1,5 @@
 ﻿const baseURL = 'http://localhost:5226/api';
+const urlParams = new URLSearchParams(window.location.search);
 
 function GetAllQuestions() {
     fetch(`${baseURL}/Post/GetAllPosts`, {
@@ -65,10 +66,10 @@ function GetAllQuestions() {
         });
 }
 function GetUserDetails() {
-    const urlParams = new URLSearchParams(window.location.search);
+
     const username = urlParams.get('username');
 
-    var userContent = document.getElementById("user-content") as HTMLDivElement;
+    let userContent = document.getElementById("user-content") as HTMLDivElement;
     fetch(`${baseURL}/User/GoToUserProfile` + '?username=' + username, {
         method: 'GET',
     })
@@ -84,9 +85,9 @@ function GetUserDetails() {
         .then(function (data) {
             console.log('Received data:', data); // Debugging line
 
-            var userName = document.createElement("div");
+            let userName = document.createElement("div");
             userName.textContent = data.userName;
-            var joinDate = document.createElement("div");
+            let joinDate = document.createElement("div");
             joinDate.textContent = data.registerDate;
 
             userContent.appendChild(userName);
@@ -96,24 +97,26 @@ function GetUserDetails() {
             console.error('Error occurred while sending the request:', error);
         });
 }
-function GetQuestionPost() {
+function GetQuestionPostAndComments() {
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get('postId');
-    var postContent = document.getElementById("post-content");
+    let postContent = document.getElementById("post-content");
+    let commentContent = document.getElementById("comment-content");
+
     fetch(`${baseURL}/Post/questions` + '?postId=' + postId, {
         method: 'GET',
     })
         .then(function (response) {
             if (response.ok) {
-                // Request was successful
-                return response.json(); // Parse the response as JSON
+                return response.json();
             } else {
-                // Request failed
                 throw new Error(response.statusText);
             }
         })
         .then(function (item) {
-            console.log('Received data:', item); // Debugging line
+            //console.log('Received question post:', item);
+
+            //console.log('Received data:', item); // Debugging line
 
             const questionSummary = document.createElement('div');
 
@@ -150,30 +153,31 @@ function GetQuestionPost() {
             questionSummary.appendChild(postDate);
 
             postContent.appendChild(questionSummary);
+            PostSpecificComments();
         })
         .catch(function (error) {
-            console.error('Error occurred while sending the request:', error);
+            console.error('Error occurred while fetching question post:', error);
         });
 }
+
 function PostSpecificComments() {
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get('postId');
-    var commentContent = document.getElementById("comment-content");
+    let commentContent = document.getElementById("comment-content");
+
     fetch(`${baseURL}/Comment/PostSpecificComments` + '?postId=' + postId, {
         method: 'GET',
     })
         .then(function (response) {
             if (response.ok) {
-                // Request was successful
-                return response.json(); // Parse the response as JSON
+                return response.json();
             } else {
-                // Request failed
                 throw new Error(response.statusText);
             }
         })
         .then(function (data) {
             data.forEach(item => {
-                console.log('Received data:', item);
+                /*console.log('Received comment:', item);*/
 
                 const contentBody = document.createElement('div');
                 contentBody.textContent = item.commentContent;
@@ -195,11 +199,40 @@ function PostSpecificComments() {
             });
         })
         .catch(function (error) {
-            console.error('Error:', error);
+            console.error('Error occurred while fetching comments:', error);
         });
 }
+
+function PostComment() {
+    const postId = urlParams.get('postId');
+    const commentInput = document.getElementById("answer-input") as HTMLInputElement;
+    const commenterName = localStorage.getItem('userEmail').replace(/\\|"/g, '');
+    const commentreq = {
+        postId: postId,
+        commenterName: commenterName,
+        commentContent: commentInput.value
+    }
+
+    const requestOptions = {
+        method: 'POST',
+        body: JSON.stringify(commentreq),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    fetch(`${baseURL}/Comment/AddComment`, requestOptions)
+        .then(response => {
+            if (response.ok) {
+                /*PostSpecificComments();*/
+                window.location.reload();
+                console.log('succesfull');
+            }
+            else {
+                showNonBlockingPopup("Posting was not successfull!", 2000);
+            }
+        })
+}
 function doboth() {
-    GetQuestionPost();
-    PostSpecificComments();
+    GetQuestionPostAndComments();
 }
 

@@ -91,6 +91,10 @@ namespace SU.Domain.Models
                     .HasMaxLength(30)
                     .IsUnicode(false)
                     .IsFixedLength();
+                entity.Property(e => e.Tags)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .IsFixedLength();
             });
 
             OnModelCreatingPartial(modelBuilder);

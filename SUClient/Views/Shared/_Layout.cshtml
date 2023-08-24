@@ -18,21 +18,18 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                    <ol class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <button class="nav-item">
-                            <a class="nav-link text-dark" id="loginpagebutton" onclick="GoToLoginPage()">Log in</a>
-                        </button>
+                            <button class="nav-link text-dark" id="loginpagebutton" onclick="GoToLoginPage()">Log in</button>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Sign Up</a>
+                            <a class="nav-link text-dark" id="registerpagebutton" asp-area="" asp-controller="Home" asp-action="Privacy">Sign Up</a>
                         </li>
-                      
-                    </ul>
+                    </ol>
                         <p id="userloginname">
                             
                         </p>
@@ -74,3 +71,9 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        AuthUserKindaAutomatically();
+    });
+</script>

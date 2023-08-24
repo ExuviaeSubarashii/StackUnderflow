@@ -6,11 +6,8 @@ namespace SUClient.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController()
         {
-            _logger = logger;
         }
 
         public IActionResult Index()
@@ -44,20 +41,5 @@ namespace SUClient.Controllers
         {
             return View("Login");
         }
-        //[HttpPost]
-        //[AllowAnonymous]
-        //public async Task<IActionResult> Login([FromBody] LoginRequest LR)
-        //{
-
-        //if (LR != null)
-        //{
-        //    var responseContent = await HttpHelper.httpClient.PostAsync("/api/Auth/AuthUser", new StringContent(System.Text.Json.JsonSerializer.Serialize(LR), System.Text.Encoding.UTF8, "application/json")).Result.Content.ReadAsStringAsync();
-        //    return View("Ask");
-        //}
-        //else
-        //{
-        //    return BadRequest();
-        //}
-        //}
     }
 }
