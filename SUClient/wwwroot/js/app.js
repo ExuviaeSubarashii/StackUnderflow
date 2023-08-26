@@ -149,18 +149,77 @@ function PostSpecificComments() {
         data.forEach(function (item) {
             /*console.log('Received comment:', item);*/
             var contentBody = document.createElement('div');
-            contentBody.textContent = item.commentContent;
+            contentBody.setAttribute("id", "contentBody");
+            var commentId = document.createElement('a');
+            commentId.setAttribute("id", "commentId");
+            commentId.textContent = item.commentId;
+            /*commentId.style.visibility = 'hidden';*/
+            var commentContext = document.createElement('p');
+            commentContext.textContent = item.commentContent;
+            commentContext.setAttribute("id", "commentContext");
             var userCard = document.createElement('div');
             userCard.classList.add('userCard');
             var userHref = document.createElement('a');
             userHref.href = "/Home/GoToUserProfile?username=".concat(encodeURIComponent(item.commenterName.trim()));
             userHref.textContent = item.commenterName;
+            userHref.setAttribute("id", "userHref");
             var commentDate = document.createElement('div');
             commentDate.textContent = item.commentDate;
+            var createEditButton = function () {
+                var editButton = document.createElement("button");
+                editButton.textContent = "Edit";
+                editButton.classList.add("edit-button");
+                // Assuming contentBody is accessible within this context
+                var useremail = localStorage.getItem('userEmail');
+                var commenterName = contentBody.querySelector('#userHref').textContent;
+                if (contentBody) {
+                    editButton.addEventListener("click", function () {
+                        var _a, _b;
+                        editButton.style.visibility = 'hidden';
+                        var varComment;
+                        var newComment;
+                        var commentIdElement = contentBody.querySelector('#commentId'); // Use '#' for ID
+                        var commentElement = contentBody.querySelector('#commentContext'); // Use '#' for ID
+                        varComment = commentElement.textContent.trim();
+                        //get comment id
+                        var varId = (_a = commentIdElement.textContent) === null || _a === void 0 ? void 0 : _a.trim();
+                        //get the comment
+                        varComment = (_b = commentElement.textContent) === null || _b === void 0 ? void 0 : _b.trim();
+                        //input to new edited text when clicked on edit
+                        var newEditCommentElement = document.createElement("input");
+                        //to save the edited comment we append a button
+                        var saveEditedComment = document.createElement("button");
+                        saveEditedComment.textContent = "Save";
+                        //replace the commentElement with newEditCommentElement
+                        newEditCommentElement.value = commentElement.textContent.trim();
+                        commentElement.parentNode.replaceChild(newEditCommentElement, commentElement);
+                        contentBody.appendChild(newEditCommentElement);
+                        contentBody.appendChild(saveEditedComment);
+                        console.log("".concat(varId, " chosen"));
+                        console.log("".concat(varComment, " chosen"));
+                        console.log("".concat(commenterName, "'s comment chosen'"));
+                        if (saveEditedComment) {
+                            newComment = newEditCommentElement.value.trim();
+                            saveEditedComment.addEventListener('click', function () {
+                                //do the fetching send the edited comment
+                                console.log("".concat(newComment, " saved"));
+                                //replace the newEditCommentElement with commentElement
+                                newEditCommentElement.parentNode.replaceChild(commentElement, newEditCommentElement);
+                                saveEditedComment.remove();
+                            });
+                        }
+                    });
+                }
+                return editButton;
+            };
             userCard.appendChild(userHref);
+            contentBody.appendChild(commentContext);
+            contentBody.appendChild(userCard);
+            contentBody.appendChild(commentDate);
+            contentBody.appendChild(commentId);
+            var editButton = createEditButton();
+            commentContent.appendChild(editButton);
             commentContent.appendChild(contentBody);
-            commentContent.appendChild(userCard);
-            commentContent.appendChild(commentDate);
         });
     })
         .catch(function (error) {

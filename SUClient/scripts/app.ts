@@ -159,7 +159,6 @@ function GetQuestionPostAndComments() {
             console.error('Error occurred while fetching question post:', error);
         });
 }
-
 function PostSpecificComments() {
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get('postId');
@@ -180,7 +179,16 @@ function PostSpecificComments() {
                 /*console.log('Received comment:', item);*/
 
                 const contentBody = document.createElement('div');
-                contentBody.textContent = item.commentContent;
+                contentBody.setAttribute("id", "contentBody");
+
+                const commentId = document.createElement('a');
+                commentId.setAttribute("id", "commentId");
+                commentId.textContent = item.commentId;
+                /*commentId.style.visibility = 'hidden';*/
+
+                const commentContext = document.createElement('p');
+                commentContext.textContent = item.commentContent;
+                commentContext.setAttribute("id", "commentContext");
 
                 const userCard = document.createElement('div');
                 userCard.classList.add('userCard');
@@ -188,21 +196,88 @@ function PostSpecificComments() {
                 const userHref = document.createElement('a');
                 userHref.href = `/Home/GoToUserProfile?username=${encodeURIComponent(item.commenterName.trim())}`;
                 userHref.textContent = item.commenterName;
+                userHref.setAttribute("id", "userHref");
+
 
                 const commentDate = document.createElement('div');
                 commentDate.textContent = item.commentDate;
 
+
+
+                const createEditButton = (): HTMLButtonElement => {
+                    const editButton = document.createElement("button");
+
+                    editButton.textContent = "Edit";
+                    editButton.classList.add("edit-button");
+
+                    // Assuming contentBody is accessible within this context
+                    var useremail = localStorage.getItem('userEmail');
+                    var commenterName = contentBody.querySelector('#userHref').textContent;
+                    if (contentBody) {
+                        editButton.addEventListener("click", () => {
+                            editButton.style.visibility = 'hidden';
+                            var varComment;
+                            var newComment;
+                            const commentIdElement = contentBody.querySelector('#commentId'); // Use '#' for ID
+
+                            const commentElement = contentBody.querySelector('#commentContext'); // Use '#' for ID
+                            varComment = commentElement.textContent.trim();
+                            //get comment id
+                            const varId = commentIdElement.textContent?.trim();
+                            //get the comment
+                            varComment = commentElement.textContent?.trim();
+
+                            //input to new edited text when clicked on edit
+                            const newEditCommentElement = document.createElement("input");
+
+                            //to save the edited comment we append a button
+                            const saveEditedComment = document.createElement("button");
+                            saveEditedComment.textContent = "Save";
+
+                            //replace the commentElement with newEditCommentElement
+                            newEditCommentElement.value = commentElement.textContent.trim();
+                            commentElement.parentNode.replaceChild(newEditCommentElement, commentElement);
+
+                            contentBody.appendChild(newEditCommentElement);
+                            contentBody.appendChild(saveEditedComment);
+                            console.log(`${varId} chosen`);
+                            console.log(`${varComment} chosen`);
+                            console.log(`${commenterName}'s comment chosen'`);
+                            if (saveEditedComment) {
+
+                                newComment = newEditCommentElement.value.trim();
+
+                                saveEditedComment.addEventListener('click', () => {
+                                    //do the fetching send the edited comment
+                                    console.log(`${newComment} saved`);
+                                    //replace the newEditCommentElement with commentElement
+                                    newEditCommentElement.parentNode.replaceChild(commentElement, newEditCommentElement);
+                                    saveEditedComment.remove();
+                                });
+                            }
+                        });
+
+                    }
+
+                    return editButton;
+
+                };
+
                 userCard.appendChild(userHref);
+                contentBody.appendChild(commentContext);
+                contentBody.appendChild(userCard);
+                contentBody.appendChild(commentDate);
+                contentBody.appendChild(commentId);
+                const editButton = createEditButton();
+                commentContent.appendChild(editButton);
                 commentContent.appendChild(contentBody);
-                commentContent.appendChild(userCard);
-                commentContent.appendChild(commentDate);
+
             });
         })
         .catch(function (error) {
             console.error('Error occurred while fetching comments:', error);
         });
 }
-
 function PostComment() {
     const postId = urlParams.get('postId');
     const commentInput = document.getElementById("answer-input") as HTMLInputElement;
