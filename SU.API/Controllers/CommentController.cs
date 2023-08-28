@@ -53,10 +53,6 @@ namespace SUAPI.Controllers
                 _SU.SaveChanges();
                 return Ok();
             }
-            else if (commentreq.)
-            {
-
-            }
             else
             {
                 return BadRequest();
