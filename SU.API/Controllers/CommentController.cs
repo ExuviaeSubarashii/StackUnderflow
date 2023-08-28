@@ -17,7 +17,7 @@ namespace SUAPI.Controllers
         [Route("AddComment")]
         public ActionResult AddComment([FromBody] NewCommentRequest commentreq)
         {
-            if (commentreq.PostId != null)
+            if (!string.IsNullOrWhiteSpace(commentreq.PostId.ToString()) && !string.IsNullOrWhiteSpace(commentreq.CommentContent))
             {
                 var checkifpostexists = _SU.UserPosts.Where(x => x.Id == commentreq.PostId).Any();
                 var checkifuserexists = _SU.Users.Select(x => x.UserName == commentreq.CommenterName).FirstOrDefault();

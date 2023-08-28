@@ -1,4 +1,67 @@
-﻿<div id="main-content">
+﻿<style>
+    /* Style for the main container */
+    #contentBody {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px;
+        background-color: #f7f7f7;
+        border-radius: 5px;
+    }
+
+    /* Style for comment ID (hidden) */
+    #commentId {
+        display: none;
+    }
+
+    /* Style for the comment content */
+    #commentContext {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    /* Style for user card */
+    .userCard {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    /* Style for user link */
+    #userHref {
+        font-weight: bold;
+        text-decoration: none;
+        color: #333;
+        margin-right: 10px;
+    }
+
+    /* Style for comment date */
+    .commentDate {
+        font-size: 12px;
+        color: #888;
+    }
+
+    #answer-input{
+        height: 500px;
+        width: 500px
+    }
+    #main-content{
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    #post-content{
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+</style>
+<div id="main-content">
 
 <div id="post-content"></div>
     <div id="comment-content"><h3>Comments</h3></div>
@@ -10,7 +73,7 @@
     <h3>Your Answer</h3>
     <input id="answer-input"/>
 </div>
-<button onclick="PostComment()">Post Your Answer</button>
+<button id="postAnswerButton" onclick="PostComment()">Post Your Answer</button>
 </footer>
 <script>
     document.addEventListener("DOMContentLoaded", function () {

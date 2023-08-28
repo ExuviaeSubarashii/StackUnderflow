@@ -28,7 +28,7 @@ namespace SUAPI.Controllers
             var userPosts = await _SU.UserPosts.Where(x => x.PosterName == userName).ToListAsync();
             return new JsonResult(userPosts);
         }
-        [HttpGet("questions")]
+        [HttpGet("Questions")]
         public async Task<ActionResult> Questions(int postId)
         {
             var post = await _SU.UserPosts.FirstOrDefaultAsync(x => x.Id == postId);

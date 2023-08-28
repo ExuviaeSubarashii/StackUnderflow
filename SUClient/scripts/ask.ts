@@ -21,29 +21,33 @@ function appendText(format: string) {
 }
 function PostQuestion() {
     const newPost = {
-        Header: header.value,
+        Header: header.value || null || "",
         MainContent: textBody.value,
         PosterName: localStorage.getItem('userEmail').replace(/\\|"/g, ''),
-        tags: tags.value || " "
+        tags: tags.value || "" || null
     };
-
-    const requestOptions = {
-        method: 'POST',
-        body: JSON.stringify(newPost),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-    fetch(`${baseURL}/Post/NewPost`, requestOptions)
-        .then(response => {
-            if (response.ok) {
-                window.location.href = "/Home/Questions"
-                console.log('succesfull');
+    if (!isNullOrEmpty(newPost.MainContent) && !isNullOrEmpty(newPost.Header)) {
+        const requestOptions = {
+            method: 'POST',
+            body: JSON.stringify(newPost),
+            headers: {
+                'Content-Type': 'application/json'
             }
-            else {
-                showNonBlockingPopup("Posting was not successfull!", 2000);
-            }
-        })
+        };
+        fetch(`${baseURL}/Post/NewPost`, requestOptions)
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = "/Home/Questions"
+                    console.log('succesfull');
+                }
+                else {
+                    showNonBlockingPopup("Posting was not successfull!", 2000);
+                }
+            })
+    }
+    else {
+        showNonBlockingPopup("Posting was not successfull!", 2000);
+    }
 }
 function showNonBlockingPopup(message: string, duration: number) {
     const popup = document.createElement("div");

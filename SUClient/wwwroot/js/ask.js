@@ -17,28 +17,33 @@ function appendText(format) {
 }
 function PostQuestion() {
     var newPost = {
-        Header: header.value,
+        Header: header.value || null || "",
         MainContent: textBody.value,
         PosterName: localStorage.getItem('userEmail').replace(/\\|"/g, ''),
-        tags: tags.value || " "
+        tags: tags.value || "" || null
     };
-    var requestOptions = {
-        method: 'POST',
-        body: JSON.stringify(newPost),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
-    fetch("".concat(baseURL, "/Post/NewPost"), requestOptions)
-        .then(function (response) {
-        if (response.ok) {
-            window.location.href = "/Home/Questions";
-            console.log('succesfull');
-        }
-        else {
-            showNonBlockingPopup("Posting was not successfull!", 2000);
-        }
-    });
+    if (!isNullOrEmpty(newPost.MainContent) && !isNullOrEmpty(newPost.Header)) {
+        var requestOptions = {
+            method: 'POST',
+            body: JSON.stringify(newPost),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+        fetch("".concat(baseURL, "/Post/NewPost"), requestOptions)
+            .then(function (response) {
+            if (response.ok) {
+                window.location.href = "/Home/Questions";
+                console.log('succesfull');
+            }
+            else {
+                showNonBlockingPopup("Posting was not successfull!", 2000);
+            }
+        });
+    }
+    else {
+        showNonBlockingPopup("Posting was not successfull!", 2000);
+    }
 }
 function showNonBlockingPopup(message, duration) {
     var popup = document.createElement("div");

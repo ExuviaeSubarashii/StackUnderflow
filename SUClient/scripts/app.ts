@@ -39,8 +39,11 @@ function GetAllQuestions() {
                     userHref.textContent = item.posterName;
 
                     const postDate = document.createElement('p');
-
                     postDate.textContent = item.postDate;
+
+
+                    const postTags = document.createElement('p');
+                    postTags.textContent = item.tags;
 
                     questionSummary.classList.add('questionSummary');
                     contentTitle.classList.add('contentTitle');
@@ -49,6 +52,7 @@ function GetAllQuestions() {
                     userCard.classList.add('userCard');
                     userHref.classList.add('userHref');
                     postDate.classList.add('postDate');
+                    postTags.classList.add('postTags');
 
                     questionSummary.appendChild(contentTitle);
                     questionSummary.appendChild(contentBody);
@@ -56,6 +60,7 @@ function GetAllQuestions() {
                     questionSummary.appendChild(userCard);
                     userCard.appendChild(userHref);
                     questionSummary.appendChild(postDate);
+                    questionSummary.appendChild(postTags);
 
                     questions.appendChild(questionSummary);
                 });
@@ -103,7 +108,7 @@ function GetQuestionPostAndComments() {
     let postContent = document.getElementById("post-content");
     let commentContent = document.getElementById("comment-content");
 
-    fetch(`${baseURL}/Post/questions` + '?postId=' + postId, {
+    fetch(`${baseURL}/Post/Questions` + '?postId=' + postId, {
         method: 'GET',
     })
         .then(function (response) {
@@ -139,18 +144,23 @@ function GetQuestionPostAndComments() {
             const postDate = document.createElement('p');
             postDate.textContent = item.postDate;
 
+            const postTags = document.createElement('p');
+            postTags.textContent = item.tags;
+
             questionSummary.classList.add('questionSummary');
             contentTitle.classList.add('contentTitle');
             contentBody.classList.add('contentBody');
             userCard.classList.add('userCard');
             userHref.classList.add('userHref');
             postDate.classList.add('postDate');
+            postTags.classList.add('postTags');
 
             questionSummary.appendChild(contentTitle);
             questionSummary.appendChild(contentBody);
             questionSummary.appendChild(userCard);
             userCard.appendChild(userHref);
             questionSummary.appendChild(postDate);
+            questionSummary.appendChild(postTags);
 
             postContent.appendChild(questionSummary);
             PostSpecificComments();
@@ -257,7 +267,6 @@ function PostSpecificComments() {
 
                                 if (saveEditedComment) {
                                     if (cancelEdit) {
-
                                     cancelEdit.addEventListener("click", () => {
                                         newEditCommentElement.parentNode.replaceChild(commentElement, newEditCommentElement);
                                         contentBody.appendChild(editButton);
@@ -321,6 +330,9 @@ function PostSpecificComments() {
             console.error('Error occurred while fetching comments:', error);
         });
 }
+function isNullOrEmpty(input: string | null): boolean {
+    return input === null || input === '';
+}
 function PostComment() {
     const postId = urlParams.get('postId');
     const commentInput = document.getElementById("answer-input") as HTMLInputElement;
@@ -330,7 +342,6 @@ function PostComment() {
         commenterName: commenterName,
         commentContent: commentInput.value
     }
-
     const requestOptions = {
         method: 'POST',
         body: JSON.stringify(commentreq),
@@ -338,10 +349,11 @@ function PostComment() {
             'Content-Type': 'application/json'
         }
     };
+    if (!isNullOrEmpty(commentreq.commentContent) || !isNullOrEmpty(commentreq.commentContent)) {
     fetch(`${baseURL}/Comment/AddComment`, requestOptions)
         .then(response => {
             if (response.ok) {
-                /*PostSpecificComments();*/
+                PostSpecificComments();
                 window.location.reload();
                 console.log('succesfull');
             }
@@ -349,7 +361,30 @@ function PostComment() {
                 showNonBlockingPopup("Posting was not successfull!", 2000);
             }
         })
+    }
+    else {
+        showNonBlockingPopup("Posting was not successfull!", 2000);
+    }
 }
 function doboth() {
     GetQuestionPostAndComments();
 }
+const commentInput = document.getElementById("answer-input") as HTMLInputElement;
+const postAnswerButton = document.getElementById("postAnswerButton") as HTMLButtonElement;
+
+if (commentInput) {
+    // Check the input value on page load
+    if (isNullOrEmpty(commentInput.value)) {
+        postAnswerButton.disabled = true;
+    }
+
+    // Add an input event listener to handle changes
+    commentInput.addEventListener("input", () => {
+        if (isNullOrEmpty(commentInput.value)) {
+            postAnswerButton.disabled = true;
+        } else {
+            postAnswerButton.disabled = false;
+        }
+    });
+}
+

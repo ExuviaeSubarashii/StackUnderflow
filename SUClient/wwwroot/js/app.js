@@ -30,6 +30,8 @@ function GetAllQuestions() {
                 userHref.textContent = item.posterName;
                 var postDate = document.createElement('p');
                 postDate.textContent = item.postDate;
+                var postTags = document.createElement('p');
+                postTags.textContent = item.tags;
                 questionSummary.classList.add('questionSummary');
                 contentTitle.classList.add('contentTitle');
                 contentBody.classList.add('contentBody');
@@ -37,12 +39,14 @@ function GetAllQuestions() {
                 userCard.classList.add('userCard');
                 userHref.classList.add('userHref');
                 postDate.classList.add('postDate');
+                postTags.classList.add('postTags');
                 questionSummary.appendChild(contentTitle);
                 questionSummary.appendChild(contentBody);
                 questionSummary.appendChild(posthref);
                 questionSummary.appendChild(userCard);
                 userCard.appendChild(userHref);
                 questionSummary.appendChild(postDate);
+                questionSummary.appendChild(postTags);
                 questions_1.appendChild(questionSummary);
             });
         }
@@ -85,7 +89,7 @@ function GetQuestionPostAndComments() {
     var postId = urlParams.get('postId');
     var postContent = document.getElementById("post-content");
     var commentContent = document.getElementById("comment-content");
-    fetch("".concat(baseURL, "/Post/questions") + '?postId=' + postId, {
+    fetch("".concat(baseURL, "/Post/Questions") + '?postId=' + postId, {
         method: 'GET',
     })
         .then(function (response) {
@@ -112,17 +116,21 @@ function GetQuestionPostAndComments() {
         userHref.textContent = item.posterName;
         var postDate = document.createElement('p');
         postDate.textContent = item.postDate;
+        var postTags = document.createElement('p');
+        postTags.textContent = item.tags;
         questionSummary.classList.add('questionSummary');
         contentTitle.classList.add('contentTitle');
         contentBody.classList.add('contentBody');
         userCard.classList.add('userCard');
         userHref.classList.add('userHref');
         postDate.classList.add('postDate');
+        postTags.classList.add('postTags');
         questionSummary.appendChild(contentTitle);
         questionSummary.appendChild(contentBody);
         questionSummary.appendChild(userCard);
         userCard.appendChild(userHref);
         questionSummary.appendChild(postDate);
+        questionSummary.appendChild(postTags);
         postContent.appendChild(questionSummary);
         PostSpecificComments();
     })
@@ -269,6 +277,9 @@ function PostSpecificComments() {
         console.error('Error occurred while fetching comments:', error);
     });
 }
+function isNullOrEmpty(input) {
+    return input === null || input === '';
+}
 function PostComment() {
     var postId = urlParams.get('postId');
     var commentInput = document.getElementById("answer-input");
@@ -285,19 +296,41 @@ function PostComment() {
             'Content-Type': 'application/json'
         }
     };
-    fetch("".concat(baseURL, "/Comment/AddComment"), requestOptions)
-        .then(function (response) {
-        if (response.ok) {
-            /*PostSpecificComments();*/
-            window.location.reload();
-            console.log('succesfull');
-        }
-        else {
-            showNonBlockingPopup("Posting was not successfull!", 2000);
-        }
-    });
+    if (!isNullOrEmpty(commentreq.commentContent) || !isNullOrEmpty(commentreq.commentContent)) {
+        fetch("".concat(baseURL, "/Comment/AddComment"), requestOptions)
+            .then(function (response) {
+            if (response.ok) {
+                PostSpecificComments();
+                window.location.reload();
+                console.log('succesfull');
+            }
+            else {
+                showNonBlockingPopup("Posting was not successfull!", 2000);
+            }
+        });
+    }
+    else {
+        showNonBlockingPopup("Posting was not successfull!", 2000);
+    }
 }
 function doboth() {
     GetQuestionPostAndComments();
+}
+var commentInput = document.getElementById("answer-input");
+var postAnswerButton = document.getElementById("postAnswerButton");
+if (commentInput) {
+    // Check the input value on page load
+    if (isNullOrEmpty(commentInput.value)) {
+        postAnswerButton.disabled = true;
+    }
+    // Add an input event listener to handle changes
+    commentInput.addEventListener("input", function () {
+        if (isNullOrEmpty(commentInput.value)) {
+            postAnswerButton.disabled = true;
+        }
+        else {
+            postAnswerButton.disabled = false;
+        }
+    });
 }
 //# sourceMappingURL=app.js.map
