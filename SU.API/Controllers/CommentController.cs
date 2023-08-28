@@ -42,16 +42,20 @@ namespace SUAPI.Controllers
         }
         [HttpPost]
         [Route("EditComment")]
-        public ActionResult EditComment(int commentId, [FromBody] NewCommentRequest commentreq)
+        public ActionResult EditComment([FromBody] NewCommentRequest commentreq)
         {
-            var checkifcommentexists = _SU.Comments.FirstOrDefault(x => x.CommentId == commentId);
-            if (checkifcommentexists != null && checkifcommentexists.CommentContent == commentreq.CommentContent)
+            var checkifcommentexists = _SU.Comments.FirstOrDefault(x => x.CommentId == commentreq.PostId);
+            if (checkifcommentexists != null)
             {
                 checkifcommentexists.CommentContent = commentreq.CommentContent;
                 //try to add if the comment is sent or edited
                 checkifcommentexists.CommentDate = DateTime.Now;
                 _SU.SaveChanges();
                 return Ok();
+            }
+            else if (commentreq.)
+            {
+
             }
             else
             {

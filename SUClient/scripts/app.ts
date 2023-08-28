@@ -236,6 +236,7 @@ function PostSpecificComments() {
 
                                 //input to new edited text when clicked on edit
                                 const newEditCommentElement = document.createElement("input");
+                                newEditCommentElement.setAttribute("id", "newEditCommentElement");
 
                                 //to save the edited comment we append a button
                                 const saveEditedComment = document.createElement("button");
@@ -251,15 +252,33 @@ function PostSpecificComments() {
                                 console.log(`${varComment} chosen`);
                                 console.log(`${commenterName}'s comment chosen'`);
                                 if (saveEditedComment) {
-
-                                    newComment = newEditCommentElement.value.trim();
-
                                     saveEditedComment.addEventListener('click', () => {
-                                        //do the fetching send the edited comment
-                                        console.log(`${newComment} saved`);
-                                        //replace the newEditCommentElement with commentElement
-                                        newEditCommentElement.parentNode.replaceChild(commentElement, newEditCommentElement);
-                                        saveEditedComment.remove();
+                                        // Get the value of the input when the "Save" button is clicked
+                                        const newestelement = contentBody.querySelector("#newEditCommentElement") as HTMLInputElement;
+                                        const newCommentValue = newestelement.value.trim();
+
+                                        const editedComment = {
+                                            postId: varId,
+                                            commenterName: commenterName,
+                                            commentContent: newCommentValue, // Use the updated value here
+                                        };
+
+                                        fetch(`${baseURL}/Comment/EditComment`, {
+                                            method: 'POST',
+                                            body: JSON.stringify(editedComment),
+                                            headers: {
+                                                'Content-Type': 'application/json', // Set the content type to JSON
+                                            },
+                                        })
+                                            .then(function (response) {
+                                                if (response.ok) {
+                                                    newEditCommentElement.parentNode.replaceChild(commentElement, newEditCommentElement);
+                                                    saveEditedComment.remove();
+                                                } else {
+                                                    throw new Error(response.statusText);
+                                                }
+                                                console.log(`${newCommentValue} saved`);
+                                            });
                                     });
                                 }
                             });
