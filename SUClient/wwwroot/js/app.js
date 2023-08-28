@@ -205,7 +205,19 @@ function PostSpecificComments() {
                             console.log("".concat(varId, " chosen"));
                             console.log("".concat(varComment, " chosen"));
                             console.log("".concat(commenterName_1, "'s comment chosen'"));
+                            var cancelEdit = document.createElement("button");
+                            cancelEdit.textContent = "Cancel";
+                            contentBody.appendChild(cancelEdit);
                             if (saveEditedComment) {
+                                if (cancelEdit) {
+                                    cancelEdit.addEventListener("click", function () {
+                                        newEditCommentElement.parentNode.replaceChild(commentElement, newEditCommentElement);
+                                        contentBody.appendChild(editButton);
+                                        editButton.style.visibility = 'visible';
+                                        saveEditedComment.remove();
+                                        cancelEdit.remove();
+                                    });
+                                }
                                 saveEditedComment.addEventListener('click', function () {
                                     // Get the value of the input when the "Save" button is clicked
                                     var newestelement = contentBody.querySelector("#newEditCommentElement");
@@ -226,6 +238,10 @@ function PostSpecificComments() {
                                         if (response.ok) {
                                             newEditCommentElement.parentNode.replaceChild(commentElement, newEditCommentElement);
                                             saveEditedComment.remove();
+                                            var postContent = document.getElementById("post-content");
+                                            postContent.innerHTML = '';
+                                            commentContent.innerHTML = '';
+                                            GetQuestionPostAndComments();
                                         }
                                         else {
                                             throw new Error(response.statusText);
@@ -245,7 +261,7 @@ function PostSpecificComments() {
             contentBody.appendChild(commentDate);
             contentBody.appendChild(commentId);
             var editButton = createEditButton();
-            commentContent.appendChild(editButton);
+            contentBody.appendChild(editButton);
             commentContent.appendChild(contentBody);
         });
     })

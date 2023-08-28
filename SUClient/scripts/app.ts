@@ -198,7 +198,6 @@ function PostSpecificComments() {
                 userHref.textContent = item.commenterName;
                 userHref.setAttribute("id", "userHref");
 
-
                 const commentDate = document.createElement('div');
                 commentDate.textContent = item.commentDate;
 
@@ -251,7 +250,22 @@ function PostSpecificComments() {
                                 console.log(`${varId} chosen`);
                                 console.log(`${varComment} chosen`);
                                 console.log(`${commenterName}'s comment chosen'`);
+
+                                const cancelEdit = document.createElement("button");
+                                cancelEdit.textContent = "Cancel";
+                                contentBody.appendChild(cancelEdit);
+
                                 if (saveEditedComment) {
+                                    if (cancelEdit) {
+
+                                    cancelEdit.addEventListener("click", () => {
+                                        newEditCommentElement.parentNode.replaceChild(commentElement, newEditCommentElement);
+                                        contentBody.appendChild(editButton);
+                                        editButton.style.visibility ='visible';
+                                        saveEditedComment.remove();
+                                        cancelEdit.remove();
+                                    });
+                                    }
                                     saveEditedComment.addEventListener('click', () => {
                                         // Get the value of the input when the "Save" button is clicked
                                         const newestelement = contentBody.querySelector("#newEditCommentElement") as HTMLInputElement;
@@ -274,6 +288,11 @@ function PostSpecificComments() {
                                                 if (response.ok) {
                                                     newEditCommentElement.parentNode.replaceChild(commentElement, newEditCommentElement);
                                                     saveEditedComment.remove();
+                                                    let postContent = document.getElementById("post-content");
+                                                    postContent.innerHTML = '';
+                                                    commentContent.innerHTML = '';
+                                                    GetQuestionPostAndComments();
+
                                                 } else {
                                                     throw new Error(response.statusText);
                                                 }
@@ -293,7 +312,7 @@ function PostSpecificComments() {
                 contentBody.appendChild(commentDate);
                 contentBody.appendChild(commentId);
                 const editButton = createEditButton();
-                commentContent.appendChild(editButton);
+                contentBody.appendChild(editButton);
                 commentContent.appendChild(contentBody);
 
             });
