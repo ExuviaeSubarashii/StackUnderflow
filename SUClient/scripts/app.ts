@@ -184,7 +184,7 @@ function PostSpecificComments() {
                 const commentId = document.createElement('a');
                 commentId.setAttribute("id", "commentId");
                 commentId.textContent = item.commentId;
-                /*commentId.style.visibility = 'hidden';*/
+                commentId.style.visibility = 'hidden';
 
                 const commentContext = document.createElement('p');
                 commentContext.textContent = item.commentContent;
@@ -202,7 +202,9 @@ function PostSpecificComments() {
                 const commentDate = document.createElement('div');
                 commentDate.textContent = item.commentDate;
 
-
+                const showcommenterbutton = document.createElement("button");
+                showcommenterbutton.setAttribute("id", "showcommenterbutton");
+                showcommenterbutton.textContent = "show2";
 
                 const createEditButton = (): HTMLButtonElement => {
                     const editButton = document.createElement("button");
@@ -211,56 +213,59 @@ function PostSpecificComments() {
                     editButton.classList.add("edit-button");
 
                     // Assuming contentBody is accessible within this context
-                    var useremail = localStorage.getItem('userEmail');
-                    var commenterName = contentBody.querySelector('#userHref').textContent;
+                    const useremail = localStorage.getItem('userEmail');
+                    const commenterNameElement = contentBody.querySelector('#userHref') as HTMLAnchorElement;
+                    const commenterNames = localStorage.getItem('userEmail').replace(/\\|"/g, '');
+
                     if (contentBody) {
-                        editButton.addEventListener("click", () => {
-                            editButton.style.visibility = 'hidden';
-                            var varComment;
-                            var newComment;
-                            const commentIdElement = contentBody.querySelector('#commentId'); // Use '#' for ID
+                        const commenterName = commenterNameElement.textContent.trim();
+                        if (commenterName === commenterNames) {
 
-                            const commentElement = contentBody.querySelector('#commentContext'); // Use '#' for ID
-                            varComment = commentElement.textContent.trim();
-                            //get comment id
-                            const varId = commentIdElement.textContent?.trim();
-                            //get the comment
-                            varComment = commentElement.textContent?.trim();
+                            editButton.addEventListener("click", () => {
+                                editButton.style.visibility = 'hidden';
+                                var varComment;
+                                var newComment;
+                                const commentIdElement = contentBody.querySelector('#commentId'); // Use '#' for ID
 
-                            //input to new edited text when clicked on edit
-                            const newEditCommentElement = document.createElement("input");
+                                const commentElement = contentBody.querySelector('#commentContext'); // Use '#' for ID
+                                varComment = commentElement.textContent.trim();
+                                //get comment id
+                                const varId = commentIdElement.textContent?.trim();
+                                //get the comment
+                                varComment = commentElement.textContent?.trim();
 
-                            //to save the edited comment we append a button
-                            const saveEditedComment = document.createElement("button");
-                            saveEditedComment.textContent = "Save";
+                                //input to new edited text when clicked on edit
+                                const newEditCommentElement = document.createElement("input");
 
-                            //replace the commentElement with newEditCommentElement
-                            newEditCommentElement.value = commentElement.textContent.trim();
-                            commentElement.parentNode.replaceChild(newEditCommentElement, commentElement);
+                                //to save the edited comment we append a button
+                                const saveEditedComment = document.createElement("button");
+                                saveEditedComment.textContent = "Save";
 
-                            contentBody.appendChild(newEditCommentElement);
-                            contentBody.appendChild(saveEditedComment);
-                            console.log(`${varId} chosen`);
-                            console.log(`${varComment} chosen`);
-                            console.log(`${commenterName}'s comment chosen'`);
-                            if (saveEditedComment) {
+                                //replace the commentElement with newEditCommentElement
+                                newEditCommentElement.value = commentElement.textContent.trim();
+                                commentElement.parentNode.replaceChild(newEditCommentElement, commentElement);
 
-                                newComment = newEditCommentElement.value.trim();
+                                contentBody.appendChild(newEditCommentElement);
+                                contentBody.appendChild(saveEditedComment);
+                                console.log(`${varId} chosen`);
+                                console.log(`${varComment} chosen`);
+                                console.log(`${commenterName}'s comment chosen'`);
+                                if (saveEditedComment) {
 
-                                saveEditedComment.addEventListener('click', () => {
-                                    //do the fetching send the edited comment
-                                    console.log(`${newComment} saved`);
-                                    //replace the newEditCommentElement with commentElement
-                                    newEditCommentElement.parentNode.replaceChild(commentElement, newEditCommentElement);
-                                    saveEditedComment.remove();
-                                });
-                            }
-                        });
+                                    newComment = newEditCommentElement.value.trim();
 
+                                    saveEditedComment.addEventListener('click', () => {
+                                        //do the fetching send the edited comment
+                                        console.log(`${newComment} saved`);
+                                        //replace the newEditCommentElement with commentElement
+                                        newEditCommentElement.parentNode.replaceChild(commentElement, newEditCommentElement);
+                                        saveEditedComment.remove();
+                                    });
+                                }
+                            });
+                        }
                     }
-
                     return editButton;
-
                 };
 
                 userCard.appendChild(userHref);
@@ -310,4 +315,3 @@ function PostComment() {
 function doboth() {
     GetQuestionPostAndComments();
 }
-
