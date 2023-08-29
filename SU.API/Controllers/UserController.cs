@@ -29,16 +29,27 @@ namespace SUAPI.Controllers
             if (loginQuery)
             {
                 string token = CreateToken(request);
-                LoginRequest returnLogin = new LoginRequest()
-                {
-                    UserName = amogyQuery.UserName,
-                    Token = token,
-                };
-                return new JsonResult(returnLogin);
+                return new JsonResult(token);
             }
             else
             {
                 return NotFound();
+            }
+        }
+        [HttpPost("AuthUser")]
+        public async Task<ActionResult> AuthUser([FromBody] LoginRequest request)
+        {
+            if (request.Token != null)
+            {
+                return Ok();
+            }
+            else if (request.UserName != null && request.Password != null)
+            {
+                string token = CreateToken(request);
+                return new JsonResult(token);
+            }
+            {
+                return BadRequest();
             }
         }
         public string CreateToken(LoginRequest request)

@@ -7,10 +7,11 @@ let user: User = new User();
 function AuthUserAutomatically() {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
 
-    if (isLoggedIn == "true") {
+    /*if (userToken !== null) {*/
         const user = {
             userEmail: localStorage.getItem('userEmail').replace(/\\|"/g, ''),
-            password: localStorage.getItem('userPassword').replace(/\\|"/g, '')
+            password: localStorage.getItem('userPassword').replace(/\\|"/g, ''),
+            Token: localStorage.getItem('usertoken').replace(/\\|"/g, '')
         };
         const requestOptions = {
             method: 'POST',
@@ -20,7 +21,7 @@ function AuthUserAutomatically() {
             }
         };
 
-        fetch(`${baseURL}/User/Login`, requestOptions)
+    fetch(`${baseURL}/User/AuthUser`, requestOptions)
             .then(response => {
                 if (!response.ok) {
                     // If login is not successful, redirect to login page
@@ -28,7 +29,7 @@ function AuthUserAutomatically() {
                 }
                 else {
                     // If login is successful, hide the buttons
-
+                    localStorage.setItem('isLoggedIn', "true");
                     document.getElementById('loginpagebutton').style.display = 'none';
                     document.getElementById('registerpagebutton').style.display = 'none';
                     console.log('Successful login');
@@ -37,11 +38,11 @@ function AuthUserAutomatically() {
             .catch(error => {
                 console.error('Error:', error);
             });
-    }
-    else {
+    //}
+    //else {
         // If user is not logged in, redirect to login page
-        window.location.href = '/Home/LoginPage';
-    }
+        //window.location.href = '/Home/LoginPage';
+    //}
 }
 function AuthUserKindaAutomatically() {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
@@ -75,18 +76,20 @@ function login() {
                 localStorage.setItem('userEmail', JSON.stringify(user.userEmail));
                 localStorage.setItem('userPassword', JSON.stringify(user.password));
                 localStorage.setItem('isLoggedIn', "true");
-                return response.json();
-            } else {
+                return response.text();
+            }
+            else {
                 throw new Error(response.statusText);
             }
         })
-        .then(data => {
-            localStorage.setItem('username', JSON.stringify(data.Username));
+        .then(sessionToken => {
+            localStorage.setItem('usertoken', sessionToken);
+            console.log('Session token:', sessionToken);
+            window.location.href = '/';
         })
         .catch(error => {
             console.error('Error occurred while sending the request:', error);
         });
-
 }
 function GoToAskPage() {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
@@ -99,9 +102,10 @@ function GoToAskPage() {
 }
 function logout() {
     localStorage.removeItem('userEmail');
-    localStorage.removeItem('userName');
+    localStorage.removeItem('username');
     localStorage.removeItem('userPassword');
     localStorage.setItem('isLoggedIn', "false");
+    localStorage.removeItem('usertoken');
 }
 function GoToLoginPage() {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
