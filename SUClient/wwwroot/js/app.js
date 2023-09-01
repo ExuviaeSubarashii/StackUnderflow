@@ -101,8 +101,6 @@ function GetQuestionPostAndComments() {
         }
     })
         .then(function (item) {
-        //console.log('Received question post:', item);
-        //console.log('Received data:', item); // Debugging line
         var questionSummary = document.createElement('div');
         questionSummary.setAttribute('id', 'question-summary-' + item.id);
         var contentTitle = document.createElement('h3');

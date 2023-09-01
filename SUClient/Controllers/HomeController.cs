@@ -41,5 +41,9 @@ namespace SUClient.Controllers
         {
             return View("Login");
         }
+        public IActionResult Register()
+        {
+            return View("Register");
+        }
     }
 }

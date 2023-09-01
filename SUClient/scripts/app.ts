@@ -119,9 +119,6 @@ function GetQuestionPostAndComments() {
             }
         })
         .then(function (item) {
-            //console.log('Received question post:', item);
-
-            //console.log('Received data:', item); // Debugging line
 
             const questionSummary = document.createElement('div');
 

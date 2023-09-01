@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using SU.Domain.Dtos;
 using SU.Domain.Models;
+using SU.Service;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -22,14 +23,31 @@ namespace SUAPI.Controllers
         [Route("Login")]
         public async Task<ActionResult> Login([FromBody] LoginRequest request)
         {
-            var loginQuery = _SU.Users.Select(x => x.UserName == request.UserName || x.UserEmail == request.UserEmail && x.Password == request.Password).FirstOrDefault();
+            var loginQuery = _SU.Users.Any(x => x.UserName == request.UserName || x.UserEmail == request.UserEmail && x.Password == request.Password);
 
             var amogyQuery = _SU.Users.Where(x => x.UserName == request.UserName || x.UserEmail == request.UserEmail && x.Password == request.Password).FirstOrDefault();
 
             if (loginQuery)
             {
                 string token = CreateToken(request);
-                return new JsonResult(token);
+                const string passphrase = "Sup3rS3curePass!";
+                var encryptionService = new EncryptionService();
+
+                var encpass = await encryptionService.EncryptAsync(request.Password, passphrase);
+
+                var fullpass = BitConverter.ToString(encpass);
+
+                var decrypted = await encryptionService.DecryptAsync(encpass, passphrase);
+
+                UserAuthDto userAuthDto = new UserAuthDto()
+                {
+                    EncEmail = request.UserEmail,
+                    EncPassword = fullpass,
+                    Token = token,
+                    UserName = amogyQuery.UserName,
+                };
+                var json = new JsonResult(userAuthDto);
+                return new JsonResult(userAuthDto);
             }
             else
             {
@@ -39,15 +57,17 @@ namespace SUAPI.Controllers
         [HttpPost("AuthUser")]
         public async Task<ActionResult> AuthUser([FromBody] LoginRequest request)
         {
-            if (request.Token != null)
+            //token expiration check
+            var jwtToken = new JwtSecurityTokenHandler().ReadToken(request.Token) as JwtSecurityToken;
+            if (request.Token != null && jwtToken.ValidTo > DateTime.UtcNow)
             {
                 return Ok();
             }
-            else if (request.UserName != null && request.Password != null)
+            else if (request.UserEmail != null && request.Password != null)
             {
-                string token = CreateToken(request);
-                return new JsonResult(token);
+                return new JsonResult(CreateToken(request));
             }
+            else
             {
                 return BadRequest();
             }
