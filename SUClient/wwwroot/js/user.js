@@ -5,12 +5,12 @@
 //let user: User = new User();
 function AuthUserAutomatically() {
     var isLoggedIn = localStorage.getItem('isLoggedIn');
-    var userToken = localStorage.getItem('usertoken');
-    if (userToken !== null) {
+    var userToken = localStorage.getItem('usertoken') || undefined;
+    if (userToken !== undefined) {
         var user = {
             userEmail: localStorage.getItem('userEmail').replace(/\\|"/g, ''),
             password: localStorage.getItem('userPassword').replace(/\\|"/g, ''),
-            Token: localStorage.getItem('usertoken').replace(/\\|"/g, '')
+            Token: userToken
         };
         var requestOptions = {
             method: 'POST',
@@ -31,7 +31,11 @@ function AuthUserAutomatically() {
                 document.getElementById('loginpagebutton').style.display = 'none';
                 document.getElementById('registerpagebutton').style.display = 'none';
                 console.log('Successful login');
+                return response.json();
             }
+        })
+            .then(function (data) {
+            localStorage.setItem('usertoken', data.token);
         })
             .catch(function (error) {
             console.error('Error:', error);
@@ -126,5 +130,36 @@ function ShowLocalStorage() {
 }
 function GoToThatPage(pageName) {
     window.location.href = "/Home/".concat(pageName);
+}
+function Register() {
+    var userEmail = document.getElementById('userEmail');
+    var userName = document.getElementById('userName');
+    var password = document.getElementById('password');
+    var passwordAgain = document.getElementById('passwordAgain');
+    var registeration = {
+        userEmail: userEmail.value,
+        userName: userName.value,
+        password: password.value,
+        passwordAgain: passwordAgain.value
+    };
+    var requestOptions = {
+        method: 'POST',
+        body: JSON.stringify(registeration),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    if (registeration.password === registeration.passwordAgain) {
+        fetch("".concat(baseURL, "/User/Register"), requestOptions)
+            .then(function (response) {
+            if (response.ok) {
+                GoToThatPage("LoginPage");
+            }
+            else {
+                throw new Error(response.statusText);
+            }
+        });
+    }
+    console.log(JSON.stringify(registeration));
 }
 //# sourceMappingURL=user.js.map

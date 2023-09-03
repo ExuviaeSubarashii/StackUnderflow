@@ -29,17 +29,18 @@
                         <li class="nav-item">
                             <button class="nav-link text-dark" id="registerpagebutton" onclick="GoToThatPage('Register')">Sign Up</button>
                         </li>
+                       
                     </ol>
-                        <p id="userloginname">
-                            
-                        </p>
                     <button onclick="logout()">
                         clear
                     </button>
                     <button onclick="ShowLocalStorage()">
                         show
                     </button>
-                   
+                    <div>
+                        Welcome, <span id="userloginname"></span>!
+                    </div>
+
                 </div>
             </div>
         </nav>
@@ -77,5 +78,11 @@
 
     document.addEventListener("DOMContentLoaded", function () {
         AuthUserKindaAutomatically();
+        var userName = localStorage.getItem('userName');
+
+        if (userName) {
+            // Set the text content of the element with the ID "userloginname"
+            document.getElementById('userloginname').textContent = userName;
+        }
     });
 </script>

@@ -1,4 +1,5 @@
 using SU.Domain.Models;
+using SU.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddSingleton<StackUnderflowContext>();
+builder.Services.AddSingleton<EncryptionService>();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>

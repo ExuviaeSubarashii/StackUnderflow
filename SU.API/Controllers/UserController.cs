@@ -14,10 +14,13 @@ namespace SUAPI.Controllers
     {
         private readonly StackUnderflowContext _SU;
         private readonly IConfiguration _config;
-        public UserController(StackUnderflowContext SU, IConfiguration configuration)
+        private readonly EncryptionService _encryptionService;
+        const string passphrase = "Sup3rS3curePass!";
+        public UserController(StackUnderflowContext SU, IConfiguration configuration, EncryptionService encryptionService)
         {
             _SU = SU;
             _config = configuration;
+            _encryptionService = encryptionService;
         }
         [HttpPost]
         [Route("Login")]
@@ -30,14 +33,12 @@ namespace SUAPI.Controllers
             if (loginQuery)
             {
                 string token = CreateToken(request);
-                const string passphrase = "Sup3rS3curePass!";
-                var encryptionService = new EncryptionService();
 
-                var encpass = await encryptionService.EncryptAsync(request.Password, passphrase);
+                var encpass = await _encryptionService.EncryptAsync(request.Password, passphrase);
 
                 var fullpass = BitConverter.ToString(encpass);
 
-                var decrypted = await encryptionService.DecryptAsync(encpass, passphrase);
+                //var decrypted = await encryptionService.DecryptAsync(encpass, passphrase);
 
                 UserAuthDto userAuthDto = new UserAuthDto()
                 {
@@ -46,7 +47,6 @@ namespace SUAPI.Controllers
                     Token = token,
                     UserName = amogyQuery.UserName,
                 };
-                var json = new JsonResult(userAuthDto);
                 return new JsonResult(userAuthDto);
             }
             else
@@ -57,14 +57,26 @@ namespace SUAPI.Controllers
         [HttpPost("AuthUser")]
         public async Task<ActionResult> AuthUser([FromBody] LoginRequest request)
         {
-            //token expiration check
+            var hexPass = HexSplitter.HexSplit(request.Password);
+            var decrypted = await _encryptionService.DecryptAsync(hexPass, passphrase);
+
             var jwtToken = new JwtSecurityTokenHandler().ReadToken(request.Token) as JwtSecurityToken;
-            if (request.Token != null && jwtToken.ValidTo > DateTime.UtcNow)
+            var query = _SU.Users.Any(x => x.UserEmail == request.UserEmail && x.Password == decrypted);
+
+            if (request.Token != null && jwtToken.ValidTo > DateTime.UtcNow && query)
             {
-                return Ok();
+                UserAuthDto userAuthDto = new UserAuthDto()
+                {
+                    Token = request.Token
+                };
+                return new JsonResult(userAuthDto);
             }
             else if (request.UserEmail != null && request.Password != null)
             {
+                UserAuthDto userAuthDto = new UserAuthDto()
+                {
+                    Token = CreateToken(request)
+                };
                 return new JsonResult(CreateToken(request));
             }
             else
@@ -89,14 +101,14 @@ namespace SUAPI.Controllers
             var jwttoken = new JwtSecurityTokenHandler().WriteToken(token);
             return jwttoken;
         }
-
         [HttpPost]
         [Route("Register")]
         public ActionResult Register([FromBody] RegisterRequest request)
         {
-            var registerQuery = _SU.Users.Where(x => x.UserName == request.UserName && x.UserEmail == request.UserEmail).Any();
+            var usernameQuery = _SU.Users.Where(x => x.UserName == request.UserName).Any();
+            var emailQuery = _SU.Users.Any(x => x.UserEmail == request.UserEmail);
 
-            if (registerQuery) { return BadRequest(); }
+            if (usernameQuery && emailQuery) { return BadRequest(); }
             else
             {
                 Users newUser = new Users()
@@ -104,7 +116,8 @@ namespace SUAPI.Controllers
                     UserName = request.UserName,
                     UserEmail = request.UserEmail,
                     Password = request.Password,
-                    RegisterDate = DateTime.Today
+                    RegisterDate = DateTime.Today,
+                    HashPassword = request.Password.ConvertStringToMD5()
                 };
                 _SU.Users.Add(newUser);
                 _SU.SaveChanges();

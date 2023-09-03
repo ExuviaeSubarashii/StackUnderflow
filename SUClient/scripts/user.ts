@@ -6,12 +6,12 @@
 //let user: User = new User();
 function AuthUserAutomatically() {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
-    const userToken = localStorage.getItem('usertoken');
-    if (userToken !== null) {
+    const userToken = localStorage.getItem('usertoken')|| undefined;
+    if (userToken !== undefined) {
         const user = {
             userEmail: localStorage.getItem('userEmail').replace(/\\|"/g, ''),
             password: localStorage.getItem('userPassword').replace(/\\|"/g, ''),
-            Token: localStorage.getItem('usertoken').replace(/\\|"/g, '')
+            Token: userToken
         };
         const requestOptions = {
             method: 'POST',
@@ -33,7 +33,11 @@ function AuthUserAutomatically() {
                     document.getElementById('loginpagebutton').style.display = 'none';
                     document.getElementById('registerpagebutton').style.display = 'none';
                     console.log('Successful login');
+                    return response.json();
                 }
+            })
+            .then(data => {
+                localStorage.setItem('usertoken', data.token);
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -133,4 +137,37 @@ function ShowLocalStorage() {
 function GoToThatPage(pageName: string) {
     window.location.href = `/Home/${pageName}`;
 }
+function Register() {
+    const userEmail = document.getElementById('userEmail') as HTMLInputElement;
+    const userName = document.getElementById('userName') as HTMLInputElement;
+    const password = document.getElementById('password') as HTMLInputElement;
+    const passwordAgain = document.getElementById('passwordAgain') as HTMLInputElement;
+
+    const registeration = {
+        userEmail: userEmail.value,
+        userName: userName.value,
+        password: password.value,
+        passwordAgain: passwordAgain.value
+    }
+    const requestOptions = {
+        method: 'POST',
+        body: JSON.stringify(registeration),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    if (registeration.password === registeration.passwordAgain) {
+        fetch(`${baseURL}/User/Register`, requestOptions)
+            .then(response => {
+                if (response.ok) {
+                    GoToThatPage("LoginPage");
+                }
+                else {
+                    throw new Error(response.statusText);
+                }
+            })
+    }
+    console.log(JSON.stringify(registeration));
+}
+
 

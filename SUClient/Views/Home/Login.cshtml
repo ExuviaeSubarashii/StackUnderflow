@@ -1,31 +1,58 @@
-﻿<div>
-    <div>
-        <button>Login in with Google</button>
-        <button>Log in with GitHub</button>
-        <button>Log in with Facebook</button>
-    </div>
-    <div>
+﻿ <style>
+        .login-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
 
+        .login-container div {
+            margin: 10px 0;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .login-container button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .login-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+<body>
+    <div class="login-container">
+        <div>
+            <button>Login in with Google</button>
+            <button>Log in with GitHub</button>
+            <button>Log in with Facebook</button>
+        </div>
         <div>
             Email
-            <input id="userEmail"/>
+            <input id="userEmail" type="text" placeholder="Enter your email" />
         </div>
         <div>
             Password
-            <input id="password"/>
+            <input id="password" type="password" placeholder="Enter your password" />
         </div>
         <div>
             <button id="login" onclick="login()">Log in</button>
-            <button id="login" onclick="Login()">Log in2</button>
-            <button onclick="logout()">
-                clear
-            </button>
-            <button onclick="GetSessionToken()">
-                getsessiontoken
-            </button>
         </div>
     </div>
-</div>
+</body>
 <script>
 
 
