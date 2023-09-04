@@ -366,9 +366,9 @@ function PostComment() {
 function doboth() {
     GetQuestionPostAndComments();
 }
+
 const commentInput = document.getElementById("answer-input") as HTMLInputElement;
 const postAnswerButton = document.getElementById("postAnswerButton") as HTMLButtonElement;
-
 if (commentInput) {
     // Check the input value on page load
     if (isNullOrEmpty(commentInput.value)) {
@@ -384,4 +384,5 @@ if (commentInput) {
         }
     });
 }
+
 

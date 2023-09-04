@@ -38,8 +38,6 @@ namespace SUAPI.Controllers
 
                 var fullpass = BitConverter.ToString(encpass);
 
-                //var decrypted = await encryptionService.DecryptAsync(encpass, passphrase);
-
                 UserAuthDto userAuthDto = new UserAuthDto()
                 {
                     EncEmail = request.UserEmail,

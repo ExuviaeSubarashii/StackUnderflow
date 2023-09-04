@@ -1,8 +1,3 @@
-//class User {
-//    email: string;
-//    password: string;
-//}
-//let user: User = new User();
 function AuthUserAutomatically() {
     var isLoggedIn = localStorage.getItem('isLoggedIn');
     var userToken = localStorage.getItem('usertoken') || undefined;
@@ -100,25 +95,9 @@ function logout() {
     localStorage.setItem('isLoggedIn', "false");
     localStorage.removeItem('usertoken');
     localStorage.removeItem('userName');
-}
-function GoToLoginPage() {
-    var isLoggedIn = localStorage.getItem('isLoggedIn');
-    if (isLoggedIn === "false") {
-        GoToThatPage("LoginPage");
-    }
-    else {
-        window.location.href = '';
-    }
+    GoToThatPage("");
 }
 function ShowLocalStorage() {
-    //const userEmail = localStorage.getItem('userEmail');
-    //const userName = localStorage.getItem('userName');
-    //const userPassword = localStorage.getItem('userPassword');
-    //const isLoggedIn = localStorage.getItem('isLoggedIn');
-    //console.log("userEmail   " + userEmail)
-    //console.log("userName    " + userName)
-    //console.log("userPassword " + userPassword)
-    //console.log("isLoggedIn  " + isLoggedIn)
     var localUser = {
         userEmail: localStorage.getItem('userEmail'),
         userName: localStorage.getItem('userName'),
