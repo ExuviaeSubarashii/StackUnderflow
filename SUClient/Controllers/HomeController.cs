@@ -45,5 +45,9 @@ namespace SUClient.Controllers
         {
             return View("Register");
         }
+        public IActionResult ChangePassword()
+        {
+            return View("ChangePassword");
+        }
     }
 }

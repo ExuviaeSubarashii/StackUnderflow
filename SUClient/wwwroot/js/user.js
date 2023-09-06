@@ -1,10 +1,7 @@
 function AuthUserAutomatically() {
-    var isLoggedIn = localStorage.getItem('isLoggedIn');
     var userToken = localStorage.getItem('usertoken') || undefined;
     if (userToken !== undefined) {
         var user = {
-            userEmail: localStorage.getItem('userEmail').replace(/\\|"/g, ''),
-            password: localStorage.getItem('userPassword').replace(/\\|"/g, ''),
             Token: userToken
         };
         var requestOptions = {
@@ -76,7 +73,7 @@ function login() {
         .then(function (data) {
         localStorage.setItem('usertoken', data.token);
         localStorage.setItem('userEmail', data.encEmail);
-        localStorage.setItem('userPassword', data.encPassword);
+        //localStorage.setItem('userPassword', data.encPassword);
         localStorage.setItem('userName', data.userName);
         localStorage.setItem('isLoggedIn', "true");
         window.location.href = '/';
@@ -130,6 +127,36 @@ function Register() {
     };
     if (registeration.password === registeration.passwordAgain) {
         fetch("".concat(baseURL, "/User/Register"), requestOptions)
+            .then(function (response) {
+            if (response.ok) {
+                GoToThatPage("LoginPage");
+            }
+            else {
+                throw new Error(response.statusText);
+            }
+        });
+    }
+    console.log(JSON.stringify(registeration));
+}
+//Change Password
+function ChangePassword() {
+    var userEmail = document.getElementById('userEmail');
+    var password = document.getElementById('password');
+    var passwordAgain = document.getElementById('passwordAgain');
+    var registeration = {
+        userEmail: userEmail.value,
+        password: password.value,
+        passwordAgain: passwordAgain.value
+    };
+    var requestOptions = {
+        method: 'POST',
+        body: JSON.stringify(registeration),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    if (registeration.password === registeration.passwordAgain) {
+        fetch("".concat(baseURL, "/User/ChangePassword"), requestOptions)
             .then(function (response) {
             if (response.ok) {
                 GoToThatPage("LoginPage");

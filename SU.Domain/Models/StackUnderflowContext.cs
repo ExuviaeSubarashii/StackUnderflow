@@ -67,6 +67,10 @@ namespace SU.Domain.Models
                     .HasMaxLength(30)
                     .IsUnicode(false)
                     .IsFixedLength();
+                entity.Property(e => e.UserToken)
+                 .HasMaxLength(208)
+                    .IsUnicode(false)
+                    .IsFixedLength();
             });
 
             modelBuilder.Entity<UserPost>(entity =>

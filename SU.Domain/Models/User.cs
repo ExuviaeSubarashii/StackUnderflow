@@ -8,5 +8,6 @@
         public string Password { get; set; } = null!;
         public string HashPassword { get; set; } = null!;
         public DateTime RegisterDate { get; set; }
+        public string UserToken { get; set; } = null!;
     }
 }

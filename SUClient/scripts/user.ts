@@ -1,10 +1,7 @@
 ﻿function AuthUserAutomatically() {
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
     const userToken = localStorage.getItem('usertoken')|| undefined;
     if (userToken !== undefined) {
         const user = {
-            userEmail: localStorage.getItem('userEmail').replace(/\\|"/g, ''),
-            password: localStorage.getItem('userPassword').replace(/\\|"/g, ''),
             Token: userToken
         };
         const requestOptions = {
@@ -80,7 +77,7 @@ function login() {
         .then(data => {
             localStorage.setItem('usertoken', data.token);
             localStorage.setItem('userEmail', data.encEmail);
-            localStorage.setItem('userPassword', data.encPassword);
+            //localStorage.setItem('userPassword', data.encPassword);
             localStorage.setItem('userName', data.userName);
             localStorage.setItem('isLoggedIn', "true");
             window.location.href = '/';
@@ -147,4 +144,35 @@ function Register() {
     console.log(JSON.stringify(registeration));
 }
 
+//Change Password
+function ChangePassword() {
+    const userEmail = document.getElementById('userEmail') as HTMLInputElement;
+    const password = document.getElementById('password') as HTMLInputElement;
+    const passwordAgain = document.getElementById('passwordAgain') as HTMLInputElement;
+
+    const registeration = {
+        userEmail: userEmail.value,
+        password: password.value,
+        passwordAgain: passwordAgain.value
+    }
+    const requestOptions = {
+        method: 'POST',
+        body: JSON.stringify(registeration),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    if (registeration.password === registeration.passwordAgain) {
+        fetch(`${baseURL}/User/ChangePassword`, requestOptions)
+            .then(response => {
+                if (response.ok) {
+                    GoToThatPage("LoginPage");
+                }
+                else {
+                    throw new Error(response.statusText);
+                }
+            })
+    }
+    console.log(JSON.stringify(registeration));
+}
 
