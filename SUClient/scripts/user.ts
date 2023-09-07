@@ -146,13 +146,15 @@ function Register() {
 
 //Change Password
 function ChangePassword() {
-    const userEmail = document.getElementById('userEmail') as HTMLInputElement;
+    //const userEmail = document.getElementById('userEmail') as HTMLInputElement;
+    const userToken = localStorage.getItem('usertoken');
     const password = document.getElementById('password') as HTMLInputElement;
     const passwordAgain = document.getElementById('passwordAgain') as HTMLInputElement;
 
     const registeration = {
-        userEmail: userEmail.value,
-        password: password.value,
+        Token: userToken,
+        /*userEmail: userEmail.value,*/
+        newPassword: password.value,
         passwordAgain: passwordAgain.value
     }
     const requestOptions = {
@@ -162,17 +164,24 @@ function ChangePassword() {
             'Content-Type': 'application/json'
         }
     };
-    if (registeration.password === registeration.passwordAgain) {
+    if (registeration.newPassword === registeration.passwordAgain) {
         fetch(`${baseURL}/User/ChangePassword`, requestOptions)
             .then(response => {
                 if (response.ok) {
-                    GoToThatPage("LoginPage");
+                    window.location.href = '/';
+                    return response.json();
                 }
                 else {
                     throw new Error(response.statusText);
                 }
             })
+            .then(data => {
+                localStorage.setItem('usertoken', data.token);
+            })
+            .catch(error => {
+                console.error('Error occurred while sending the request:', error);
+            });
     }
-    console.log(JSON.stringify(registeration));
+
 }
 

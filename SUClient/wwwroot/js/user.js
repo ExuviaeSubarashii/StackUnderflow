@@ -140,12 +140,14 @@ function Register() {
 }
 //Change Password
 function ChangePassword() {
-    var userEmail = document.getElementById('userEmail');
+    //const userEmail = document.getElementById('userEmail') as HTMLInputElement;
+    var userToken = localStorage.getItem('usertoken');
     var password = document.getElementById('password');
     var passwordAgain = document.getElementById('passwordAgain');
     var registeration = {
-        userEmail: userEmail.value,
-        password: password.value,
+        Token: userToken,
+        /*userEmail: userEmail.value,*/
+        newPassword: password.value,
         passwordAgain: passwordAgain.value
     };
     var requestOptions = {
@@ -155,17 +157,23 @@ function ChangePassword() {
             'Content-Type': 'application/json'
         }
     };
-    if (registeration.password === registeration.passwordAgain) {
+    if (registeration.newPassword === registeration.passwordAgain) {
         fetch("".concat(baseURL, "/User/ChangePassword"), requestOptions)
             .then(function (response) {
             if (response.ok) {
-                GoToThatPage("LoginPage");
+                window.location.href = '/';
+                return response.json();
             }
             else {
                 throw new Error(response.statusText);
             }
+        })
+            .then(function (data) {
+            localStorage.setItem('usertoken', data.token);
+        })
+            .catch(function (error) {
+            console.error('Error occurred while sending the request:', error);
         });
     }
-    console.log(JSON.stringify(registeration));
 }
 //# sourceMappingURL=user.js.map

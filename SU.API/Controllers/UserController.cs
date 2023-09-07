@@ -79,11 +79,11 @@ namespace SUAPI.Controllers
             var jwttoken = new JwtSecurityTokenHandler().WriteToken(token);
             return jwttoken;
         }
-        public string CreateRegisterToken(RegisterRequest request)
+        public string CreateRegisterToken(string userName, string userEmail, string password)
         {
             List<Claim> claims = new List<Claim>();
             {
-                _ = new Claim(ClaimTypes.Name, request.UserName, request.UserEmail, request.Password);
+                _ = new Claim(ClaimTypes.Name, userName, userEmail, password);
             }
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
@@ -113,7 +113,7 @@ namespace SUAPI.Controllers
                     Password = request.Password,
                     RegisterDate = DateTime.Today,
                     HashPassword = request.Password.ConvertStringToMD5(),
-                    UserToken = CreateRegisterToken(request)
+                    UserToken = CreateRegisterToken(request.UserName, request.UserEmail, request.Password)
                 };
                 _SU.Users.Add(newUser);
                 _SU.SaveChanges();
@@ -142,17 +142,20 @@ namespace SUAPI.Controllers
             }
         }
         [HttpPost("ChangePassword")]
-        public ActionResult ChangePassword([FromBody] RegisterRequest request)
+        public ActionResult ChangePassword([FromBody] ChangePasswordDTO request)
         {
-            var usernameQuery = _SU.Users.Where(x => x.UserName == request.UserName || x.UserEmail == request.UserEmail).Any();
-            var getUser = _SU.Users.FirstOrDefault(x => x.UserName == request.UserName || x.UserEmail == request.UserEmail);
-            request.UserName = getUser.UserName;
-            if (usernameQuery && getUser.Password != request.Password)
+            var usernameQuery = _SU.Users.Where(x => x.UserToken == request.Token).Any();
+            var getUser = _SU.Users.FirstOrDefault(x => x.UserToken == request.Token);
+            if (usernameQuery && getUser.Password != request.NewPassword)
             {
-                getUser.Password = request.Password.Trim();
-                getUser.UserToken = CreateRegisterToken(request);
+                getUser.Password = request.NewPassword.Trim();
+                getUser.UserToken = CreateRegisterToken(getUser.UserName, getUser.UserEmail, request.NewPassword);
                 _SU.SaveChanges();
-                return Ok();
+                ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO()
+                {
+                    Token = getUser.UserToken
+                };
+                return new JsonResult(changePasswordDTO);
             }
             else
             {
