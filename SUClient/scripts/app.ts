@@ -88,7 +88,7 @@ function GetUserDetails() {
             }
         })
         .then(function (data) {
-            console.log('Received data:', data); // Debugging line
+            //console.log('Received data:', data); // Debugging line
 
             let userName = document.createElement("div");
             userName.textContent = data.userName;
@@ -144,6 +144,11 @@ function GetQuestionPostAndComments() {
             const postTags = document.createElement('p');
             postTags.textContent = item.tags;
 
+
+            const deletePostButton = document.createElement("button");
+            deletePostButton.setAttribute("id", "deletePostButton");
+            deletePostButton.textContent = "Delete Post";
+
             questionSummary.classList.add('questionSummary');
             contentTitle.classList.add('contentTitle');
             contentBody.classList.add('contentBody');
@@ -155,6 +160,7 @@ function GetQuestionPostAndComments() {
             questionSummary.appendChild(contentTitle);
             questionSummary.appendChild(contentBody);
             questionSummary.appendChild(userCard);
+            questionSummary.appendChild(deletePostButton);
             userCard.appendChild(userHref);
             questionSummary.appendChild(postDate);
             questionSummary.appendChild(postTags);
@@ -333,10 +339,10 @@ function isNullOrEmpty(input: string | null): boolean {
 function PostComment() {
     const postId = urlParams.get('postId');
     const commentInput = document.getElementById("answer-input") as HTMLInputElement;
-    const commenterName = localStorage.getItem('userEmail').replace(/\\|"/g, '');
+    const userToken = localStorage.getItem('usertoken').replace(/\\|"/g, '');
     const commentreq = {
         postId: postId,
-        commenterName: commenterName,
+        userToken: userToken,
         commentContent: commentInput.value
     }
     const requestOptions = {
@@ -367,6 +373,39 @@ function doboth() {
     GetQuestionPostAndComments();
 }
 
+function DeletePost() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('postId');
+    const token=localStorage.getItem('usertoken')
+    const deletePost = {
+        postId: postId,
+        posterToken: token
+    }
+
+    const requestOptions = {
+        method: 'POST',
+        body: JSON.stringify(deletePost),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    fetch(`${baseURL}/Post/DeletePost`, requestOptions)
+        .then(response => {
+            if (response.ok) {
+                GoToThatPage('');
+                console.log('succesfull');
+            }
+            else {
+                showNonBlockingPopup("Deleting was not successfull!", 2000);
+            }
+        })
+}
+
+
+
+
+
+
 const commentInput = document.getElementById("answer-input") as HTMLInputElement;
 const postAnswerButton = document.getElementById("postAnswerButton") as HTMLButtonElement;
 if (commentInput) {
@@ -384,5 +423,8 @@ if (commentInput) {
         }
     });
 }
+const deletePostButton = document.addEventListener("click", () => {
+    DeletePost();
+})
 
 

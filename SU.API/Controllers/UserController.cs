@@ -14,29 +14,25 @@ namespace SUAPI.Controllers
     {
         private readonly StackUnderflowContext _SU;
         private readonly IConfiguration _config;
-        private readonly EncryptionService _encryptionService;
-        const string passphrase = "Sup3rS3curePass!";
-        public UserController(StackUnderflowContext SU, IConfiguration configuration, EncryptionService encryptionService)
+        public UserController(StackUnderflowContext SU, IConfiguration configuration)
         {
             _SU = SU;
             _config = configuration;
-            _encryptionService = encryptionService;
         }
-        [HttpPost]
-        [Route("Login")]
+        [HttpPost("Login")]
         public async Task<ActionResult> Login([FromBody] LoginRequest request)
         {
             var loginQuery = _SU.Users.Any(x => x.UserName == request.UserName || x.UserEmail == request.UserEmail && x.Password == request.Password);
 
-            var amogyQuery = _SU.Users.Where(x => x.UserName == request.UserName || x.UserEmail == request.UserEmail && x.Password == request.Password).FirstOrDefault();
+            var userAuthQuery = _SU.Users.Where(x => x.UserName == request.UserName || x.UserEmail == request.UserEmail && x.Password == request.Password).FirstOrDefault();
 
             if (loginQuery)
             {
                 UserAuthDto userAuthDto = new UserAuthDto()
                 {
                     EncEmail = request.UserEmail,
-                    Token = amogyQuery.UserToken,
-                    UserName = amogyQuery.UserName,
+                    Token = userAuthQuery.UserToken,
+                    UserName = userAuthQuery.UserName,
                 };
                 return new JsonResult(userAuthDto);
             }
@@ -96,8 +92,7 @@ namespace SUAPI.Controllers
             var jwttoken = new JwtSecurityTokenHandler().WriteToken(token);
             return jwttoken;
         }
-        [HttpPost]
-        [Route("Register")]
+        [HttpPost("Register")]
         public ActionResult Register([FromBody] RegisterRequest request)
         {
             var usernameQuery = _SU.Users.Where(x => x.UserName == request.UserName).Any();
@@ -120,8 +115,7 @@ namespace SUAPI.Controllers
                 return Ok();
             }
         }
-        [HttpGet]
-        [Route("GoToUserProfile")]
+        [HttpGet("GoToUserProfile")]
         public ActionResult GoToUserProfile(string username, Users? query)
         {
             var doesuserexist = _SU.Users.Any(x => x.UserName == username);
@@ -151,17 +145,29 @@ namespace SUAPI.Controllers
                 getUser.Password = request.NewPassword.Trim();
                 getUser.UserToken = CreateRegisterToken(getUser.UserName, getUser.UserEmail, request.NewPassword);
                 _SU.SaveChanges();
-                ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO()
-                {
-                    Token = getUser.UserToken
-                };
-                return new JsonResult(changePasswordDTO);
+                return Ok();
             }
             else
             {
                 return BadRequest();
             }
+        }
+        [HttpGet("GetUserComments")]
+        public async Task<JsonResult> GetUserComments(string? username)
+        {
+            var commentQuery = _SU.Comments.Where(x => x.CommenterName == username).ToList();
+            foreach (var item in commentQuery)
+            {
 
+            }
+            if (commentQuery.Any())
+            {
+                return new JsonResult(commentQuery);
+            }
+            else
+            {
+                return new JsonResult(Enumerable.Empty<Comment>());
+            }
         }
     }
 }

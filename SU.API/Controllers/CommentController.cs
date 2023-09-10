@@ -20,12 +20,13 @@ namespace SUAPI.Controllers
             if (!string.IsNullOrWhiteSpace(commentreq.PostId.ToString()) && !string.IsNullOrWhiteSpace(commentreq.CommentContent))
             {
                 var checkifpostexists = _SU.UserPosts.Where(x => x.Id == commentreq.PostId).Any();
-                var checkifuserexists = _SU.Users.Any(x => x.UserName == commentreq.CommenterName);
+                var checkifuserexists = _SU.Users.Any(x => x.UserToken == commentreq.UserToken);
+                var userContext = _SU.Users.FirstOrDefault(x => x.UserToken == commentreq.UserToken);
                 if (checkifpostexists && checkifuserexists)
                 {
                     Comment newComment = new Comment()
                     {
-                        CommenterName = commentreq.CommenterName,
+                        CommenterName = userContext.UserName,
                         CommentContent = commentreq.CommentContent,
                         CommentDate = DateTime.Now,
                         PostId = commentreq.PostId

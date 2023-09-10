@@ -42,8 +42,6 @@ namespace SUAPI.Controllers
                 return NotFound(); // Return a 404 response if the post is not found
             }
         }
-
-
         [HttpPost]
         [Route("NewPost")]
         public ActionResult AddNewPost(NewPostRequest request)
@@ -60,6 +58,27 @@ namespace SUAPI.Controllers
                     Tags = request.Tags,
                 };
                 _SU.UserPosts.Add(newPost);
+                _SU.SaveChanges();
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+        //gonderi silindiginde o post idsindeki yorumlari da sil
+        [HttpPost]
+        [Route("DeletePost")]
+        public ActionResult DeletePost([FromBody] DeletePostRequest DPR)
+        {
+            var doesPostExist = _SU.UserPosts.Any(x => x.Id == DPR.PostId);
+            var postContent = _SU.UserPosts.FirstOrDefault(x => x.Id == DPR.PostId);
+            var postContentComments = _SU.Comments.Where(x => x.PostId == DPR.PostId).ToList();
+            var getUser = _SU.Users.FirstOrDefault(x => x.UserToken == DPR.PosterToken);
+            if (doesPostExist && getUser.UserEmail == postContent.PosterName)
+            {
+                _SU.UserPosts.Remove(postContent);
+                _SU.Comments.RemoveRange(postContentComments);
                 _SU.SaveChanges();
                 return Ok();
             }

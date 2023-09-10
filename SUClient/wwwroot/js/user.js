@@ -73,7 +73,6 @@ function login() {
         .then(function (data) {
         localStorage.setItem('usertoken', data.token);
         localStorage.setItem('userEmail', data.encEmail);
-        //localStorage.setItem('userPassword', data.encPassword);
         localStorage.setItem('userName', data.userName);
         localStorage.setItem('isLoggedIn', "true");
         window.location.href = '/';
@@ -88,7 +87,6 @@ function GoToAskPage() {
 function logout() {
     localStorage.removeItem('userEmail');
     localStorage.removeItem('username');
-    localStorage.removeItem('userPassword');
     localStorage.setItem('isLoggedIn', "false");
     localStorage.removeItem('usertoken');
     localStorage.removeItem('userName');
@@ -138,7 +136,6 @@ function Register() {
     }
     console.log(JSON.stringify(registeration));
 }
-//Change Password
 function ChangePassword() {
     //const userEmail = document.getElementById('userEmail') as HTMLInputElement;
     var userToken = localStorage.getItem('usertoken');
@@ -161,19 +158,56 @@ function ChangePassword() {
         fetch("".concat(baseURL, "/User/ChangePassword"), requestOptions)
             .then(function (response) {
             if (response.ok) {
-                window.location.href = '/';
+                logout();
+                GoToThatPage('LoginPage');
                 return response.json();
             }
             else {
                 throw new Error(response.statusText);
             }
-        })
-            .then(function (data) {
-            localStorage.setItem('usertoken', data.token);
-        })
-            .catch(function (error) {
-            console.error('Error occurred while sending the request:', error);
         });
+        //.then(data => {
+        //    localStorage.setItem('usertoken', data.token);
+        //})
+        //.catch(error => {
+        //    console.error('Error occurred while sending the request:', error);
+        //});
     }
+}
+function GoToMyProfile() {
+    GoToThatPage('GoToUserProfile?username=' + localStorage.getItem('userName'));
+}
+function GetUserComments() {
+    var username = urlParams.get('username');
+    console.log(username.trim());
+    var mainContent = document.getElementById('main-content');
+    fetch("".concat(baseURL, "/User/GetUserComments") + '?username=' + username, {
+        method: 'GET',
+    })
+        .then(function (response) {
+        if (response.ok) {
+            return response.json();
+        }
+    })
+        .then(function (data) {
+        data.forEach(function (item) {
+            var contentBody = document.createElement('div');
+            contentBody.setAttribute("id", "contentBody");
+            var commentId = document.createElement('a');
+            commentId.setAttribute("id", "commentId");
+            commentId.textContent = item.commentId;
+            commentId.style.visibility = 'hidden';
+            var commentContext = document.createElement('p');
+            commentContext.textContent = item.commentContent;
+            commentContext.setAttribute("id", "commentContext");
+            var postHref = document.createElement('a');
+            postHref.href = "/Home/Questions?postId=".concat(encodeURIComponent(item.postId.trim()));
+            postHref.setAttribute("id", "postHref");
+            var gotopostButton = document.createElement('button');
+            gotopostButton.setAttribute('id', "gotopostButton");
+            var commentDate = document.createElement('div');
+            commentDate.textContent = item.commentDate;
+        });
+    });
 }
 //# sourceMappingURL=user.js.map
