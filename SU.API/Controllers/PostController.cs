@@ -84,7 +84,7 @@ namespace SUAPI.Controllers
             }
             else
             {
-                return BadRequest();
+                return Unauthorized();
             }
         }
     }
