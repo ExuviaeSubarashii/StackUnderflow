@@ -44,7 +44,7 @@ namespace SUAPI.Controllers
         [HttpPost("AuthUser")]
         public async Task<ActionResult> AuthUser([FromBody] LoginRequest request)
         {
-            var query = _SU.Users.Select(x => x.UserToken == request.Token).FirstOrDefault();
+            var query = _SU.Users.Any(x => x.UserToken == request.Token);
             if (query)
             {
                 UserAuthDto userAuthDto = new UserAuthDto()

@@ -116,9 +116,9 @@ function GetQuestionPostAndComments() {
         postDate.textContent = item.postDate;
         var postTags = document.createElement('p');
         postTags.textContent = item.tags;
-        var deletePostButton = document.createElement("button");
-        deletePostButton.setAttribute("id", "deletePostButton");
-        deletePostButton.textContent = "Delete Post";
+        //const deletePostButton = document.createElement("button");
+        //deletePostButton.setAttribute("id", "deletePostButton");
+        //deletePostButton.textContent = "Delete Post";
         questionSummary.classList.add('questionSummary');
         contentTitle.classList.add('contentTitle');
         contentBody.classList.add('contentBody');
@@ -129,10 +129,10 @@ function GetQuestionPostAndComments() {
         questionSummary.appendChild(contentTitle);
         questionSummary.appendChild(contentBody);
         questionSummary.appendChild(userCard);
-        questionSummary.appendChild(deletePostButton);
         userCard.appendChild(userHref);
         questionSummary.appendChild(postDate);
         questionSummary.appendChild(postTags);
+        //questionSummary.appendChild(deletePostButton);
         postContent.appendChild(questionSummary);
         PostSpecificComments();
     })
@@ -318,13 +318,10 @@ function PostComment() {
 function doboth() {
     GetQuestionPostAndComments();
 }
-function DeletePost() {
-    var urlParams = new URLSearchParams(window.location.search);
-    var postId = urlParams.get('postId');
-    var token = localStorage.getItem('usertoken');
+function DeletePost(postId, posterToken) {
     var deletePost = {
         postId: postId,
-        posterToken: token
+        posterToken: posterToken
     };
     var requestOptions = {
         method: 'POST',
@@ -344,6 +341,17 @@ function DeletePost() {
         }
     });
 }
+document.addEventListener("DOMContentLoaded", function () {
+    var deletePostButton = document.getElementById('deletePostButton');
+    if (deletePostButton) {
+        var urlParams_1 = new URLSearchParams(window.location.search);
+        var postId_1 = urlParams_1.get('postId');
+        var token_1 = localStorage.getItem('usertoken');
+        deletePostButton.addEventListener("click", function () {
+            DeletePost(postId_1, token_1);
+        });
+    }
+});
 var commentInput = document.getElementById("answer-input");
 var postAnswerButton = document.getElementById("postAnswerButton");
 if (commentInput) {
@@ -361,7 +369,4 @@ if (commentInput) {
         }
     });
 }
-var deletePostButton = document.addEventListener("click", function () {
-    DeletePost();
-});
 //# sourceMappingURL=app.js.map

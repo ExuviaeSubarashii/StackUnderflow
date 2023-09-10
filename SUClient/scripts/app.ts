@@ -145,9 +145,9 @@ function GetQuestionPostAndComments() {
             postTags.textContent = item.tags;
 
 
-            const deletePostButton = document.createElement("button");
-            deletePostButton.setAttribute("id", "deletePostButton");
-            deletePostButton.textContent = "Delete Post";
+            //const deletePostButton = document.createElement("button");
+            //deletePostButton.setAttribute("id", "deletePostButton");
+            //deletePostButton.textContent = "Delete Post";
 
             questionSummary.classList.add('questionSummary');
             contentTitle.classList.add('contentTitle');
@@ -160,10 +160,10 @@ function GetQuestionPostAndComments() {
             questionSummary.appendChild(contentTitle);
             questionSummary.appendChild(contentBody);
             questionSummary.appendChild(userCard);
-            questionSummary.appendChild(deletePostButton);
             userCard.appendChild(userHref);
             questionSummary.appendChild(postDate);
             questionSummary.appendChild(postTags);
+            //questionSummary.appendChild(deletePostButton);
 
             postContent.appendChild(questionSummary);
             PostSpecificComments();
@@ -270,13 +270,13 @@ function PostSpecificComments() {
 
                                 if (saveEditedComment) {
                                     if (cancelEdit) {
-                                    cancelEdit.addEventListener("click", () => {
-                                        newEditCommentElement.parentNode.replaceChild(commentElement, newEditCommentElement);
-                                        contentBody.appendChild(editButton);
-                                        editButton.style.visibility ='visible';
-                                        saveEditedComment.remove();
-                                        cancelEdit.remove();
-                                    });
+                                        cancelEdit.addEventListener("click", () => {
+                                            newEditCommentElement.parentNode.replaceChild(commentElement, newEditCommentElement);
+                                            contentBody.appendChild(editButton);
+                                            editButton.style.visibility = 'visible';
+                                            saveEditedComment.remove();
+                                            cancelEdit.remove();
+                                        });
                                     }
                                     saveEditedComment.addEventListener('click', () => {
                                         // Get the value of the input when the "Save" button is clicked
@@ -353,17 +353,17 @@ function PostComment() {
         }
     };
     if (!isNullOrEmpty(commentreq.commentContent) || !isNullOrEmpty(commentreq.commentContent)) {
-    fetch(`${baseURL}/Comment/AddComment`, requestOptions)
-        .then(response => {
-            if (response.ok) {
-                PostSpecificComments();
-                window.location.reload();
-                console.log('succesfull');
-            }
-            else {
-                showNonBlockingPopup("Posting was not successfull!", 2000);
-            }
-        })
+        fetch(`${baseURL}/Comment/AddComment`, requestOptions)
+            .then(response => {
+                if (response.ok) {
+                    PostSpecificComments();
+                    window.location.reload();
+                    console.log('succesfull');
+                }
+                else {
+                    showNonBlockingPopup("Posting was not successfull!", 2000);
+                }
+            })
     }
     else {
         showNonBlockingPopup("Posting was not successfull!", 2000);
@@ -373,13 +373,11 @@ function doboth() {
     GetQuestionPostAndComments();
 }
 
-function DeletePost() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const postId = urlParams.get('postId');
-    const token=localStorage.getItem('usertoken')
+function DeletePost(postId: string, posterToken: string) {
+
     const deletePost = {
         postId: postId,
-        posterToken: token
+        posterToken: posterToken
     }
 
     const requestOptions = {
@@ -400,6 +398,21 @@ function DeletePost() {
             }
         })
 }
+document.addEventListener("DOMContentLoaded", function () {
+    const deletePostButton = document.getElementById('deletePostButton');
+    if (deletePostButton) {
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('postId');
+        const token = localStorage.getItem('usertoken')
+
+
+        deletePostButton.addEventListener("click", () => {
+            DeletePost(postId, token);
+        });
+    }
+});
+
 
 
 
@@ -423,8 +436,5 @@ if (commentInput) {
         }
     });
 }
-const deletePostButton = document.addEventListener("click", () => {
-    DeletePost();
-})
 
 

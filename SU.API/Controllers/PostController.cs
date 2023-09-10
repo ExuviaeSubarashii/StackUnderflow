@@ -75,7 +75,7 @@ namespace SUAPI.Controllers
             var postContent = _SU.UserPosts.FirstOrDefault(x => x.Id == DPR.PostId);
             var postContentComments = _SU.Comments.Where(x => x.PostId == DPR.PostId).ToList();
             var getUser = _SU.Users.FirstOrDefault(x => x.UserToken == DPR.PosterToken);
-            if (doesPostExist && getUser.UserEmail == postContent.PosterName)
+            if (doesPostExist && getUser.UserEmail.Trim() == postContent.PosterName.Trim())
             {
                 _SU.UserPosts.Remove(postContent);
                 _SU.Comments.RemoveRange(postContentComments);
