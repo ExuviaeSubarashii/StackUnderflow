@@ -125,7 +125,7 @@ function Register() {
         method: 'POST',
         body: JSON.stringify(registeration),
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json' 
         }
     };
     if (registeration.password === registeration.passwordAgain) {
