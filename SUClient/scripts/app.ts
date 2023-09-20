@@ -81,6 +81,7 @@ function GetUserDetails() {
         .then(function (response) {
             if (response.ok) {
                 // Request was successful
+
                 return response.json(); // Parse the response as JSON
             } else {
                 // Request failed
@@ -97,7 +98,9 @@ function GetUserDetails() {
 
             userContent.appendChild(userName);
             userContent.appendChild(joinDate);
+            setTimeout(GetUserComments, 4000);
         })
+        
         .catch(function (error) {
             console.error('Error occurred while sending the request:', error);
         });

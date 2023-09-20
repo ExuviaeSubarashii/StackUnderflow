@@ -82,6 +82,7 @@ namespace SUAPI.Controllers
                 _ = new Claim(ClaimTypes.Name, userName, userEmail, password);
             }
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
+
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var token = new JwtSecurityToken(
@@ -116,7 +117,7 @@ namespace SUAPI.Controllers
             }
         }
         [HttpGet("GoToUserProfile")]
-        public ActionResult GoToUserProfile(string username, Users? query)
+        public async Task<ActionResult> GoToUserProfile(string username, Users? query)
         {
             var doesuserexist = _SU.Users.Any(x => x.UserName == username);
             if (doesuserexist)
@@ -156,17 +157,48 @@ namespace SUAPI.Controllers
         public async Task<JsonResult> GetUserComments(string? username)
         {
             var commentQuery = _SU.Comments.Where(x => x.CommenterName == username).ToList();
-            foreach (var item in commentQuery)
-            {
+            int[] postIdArray = new int[commentQuery.Count];
+            int[] commentIdArray = new int[commentQuery.Count];
+            int postindex = 0;
+            int commentindex = 0;
 
-            }
-            if (commentQuery.Any())
+            foreach (var comment in commentQuery)
             {
-                return new JsonResult(commentQuery);
+                postIdArray[postindex] = comment.PostId;
+                commentIdArray[commentindex] = comment.CommentId;
+                postindex++;
+                commentindex++;
+            }
+            List<UserProfileCommentsDTO> userCommentList = new List<UserProfileCommentsDTO>();
+            for (int i = 0; i < commentQuery.Count; i++)
+            {
+                var postQuery = _SU.UserPosts.FirstOrDefault(x => x.Id == postIdArray[i]);
+                var userCommentQuery = _SU.Comments.FirstOrDefault(x => x.CommentId == commentIdArray[i]);
+
+                UserProfileCommentsDTO UPC = new UserProfileCommentsDTO()
+                {
+                    PostId = postIdArray[i],
+                    CommentId = commentIdArray[i],
+                    CommenterName = userCommentQuery.CommenterName.Trim(),
+                    CommentDate = userCommentQuery.CommentDate,
+                    CommentContent = userCommentQuery.CommentContent.Trim(),
+                    Header = postQuery.Header.Trim(),
+                    MainContent = postQuery.MainContent.Trim(),
+                    Image = postQuery.Image,
+                    PostDate = postQuery.PostDate,
+                    PosterName = postQuery.PosterName.Trim(),
+                    Tags = postQuery.Tags.Trim(),
+                };
+                userCommentList.Add(UPC);
+            }
+
+            if (userCommentList.Count > 0)
+            {
+                return new JsonResult(userCommentList.ToList());
             }
             else
             {
-                return new JsonResult(Enumerable.Empty<Comment>());
+                return new JsonResult(Enumerable.Empty<UserProfileCommentsDTO>());
             }
         }
     }

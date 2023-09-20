@@ -3,9 +3,9 @@
     public class RegisterRequest
     {
         public int Id { get; set; }
-        public string? UserEmail { get; set; } = null!;
-        public string? UserName { get; set; } = null!;
-        public string? Password { get; set; } = null!;
-        public string? UserToken { get; set; } = null!;
+        public string UserEmail { get; set; } = null!;
+        public string UserName { get; set; } = null!;
+        public string Password { get; set; } = null!;
+        public string UserToken { get; set; } = null!;
     }
 }

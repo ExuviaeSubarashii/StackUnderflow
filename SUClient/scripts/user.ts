@@ -186,7 +186,6 @@ function GoToMyProfile() {
 }
 function GetUserComments() {
     const username = urlParams.get('username');
-    console.log(username.trim());
     const mainContent = document.getElementById('main-content');
     fetch(`${baseURL}/User/GetUserComments` + '?username=' + username, {
         method: 'GET',
@@ -199,28 +198,55 @@ function GetUserComments() {
         .then(data => {
             data.forEach(item => {
                 const contentBody = document.createElement('div');
-                contentBody.setAttribute("id", "contentBody");
+                contentBody.classList.add('content-body'); // Add a class to contentBody
 
                 const commentId = document.createElement('a');
-                commentId.setAttribute("id", "commentId");
-                commentId.textContent = item.commentId;
+                commentId.classList.add('comment-id'); // Add a class to commentId
                 commentId.style.visibility = 'hidden';
-
-                const commentContext = document.createElement('p');
-                commentContext.textContent = item.commentContent;
-                commentContext.setAttribute("id", "commentContext");
+                commentId.textContent = item.commentId;
 
                 const postHref = document.createElement('a');
-                postHref.href = `/Home/Questions?postId=${encodeURIComponent(item.postId.trim())}`;
-                postHref.setAttribute("id", "postHref");
+                postHref.classList.add('post-href'); // Add a class to postHref
+                postHref.href = `/Home/Questions?postId=${encodeURIComponent(item.postId)}`;
 
                 const gotopostButton = document.createElement('button');
-                gotopostButton.setAttribute('id', "gotopostButton");
+                gotopostButton.classList.add('gotopost-button'); // Add a class to gotopostButton
 
+                const commenterName = document.createElement('p');
+                commenterName.classList.add('commenter-name'); // Add a class to commenterName
+                commenterName.textContent = item.commenterName;
 
-
-                const commentDate = document.createElement('div');
+                const commentDate = document.createElement('p');
+                commentDate.classList.add('comment-date'); // Add a class to commentDate
                 commentDate.textContent = item.commentDate;
+
+                const commentHeader = document.createElement('header');
+                commentHeader.classList.add('comment-header'); // Add a class to commentHeader
+                commentHeader.textContent = item.header;
+
+                const mainContentItem = document.createElement('h2');
+                mainContentItem.classList.add('main-content'); // Add a class to mainContentItem
+                mainContentItem.textContent = item.mainContent;
+
+                const posterName = document.createElement("p");
+                posterName.classList.add('poster-name'); // Add a class to posterName
+                posterName.textContent = item.posterName;
+
+                const tags = document.createElement("p");
+                tags.classList.add('tags'); // Add a class to tags
+                tags.textContent = item.tags;
+
+                contentBody.appendChild(commentId);
+                contentBody.appendChild(postHref);
+                contentBody.appendChild(gotopostButton);
+                contentBody.appendChild(commenterName);
+                contentBody.appendChild(commentDate);
+                contentBody.appendChild(commentHeader);
+                contentBody.appendChild(mainContentItem); // Use the new variable here
+                contentBody.appendChild(posterName);
+                contentBody.appendChild(tags);
+
+                mainContent.appendChild(contentBody); // Append contentBody to mainContent
             })
         })
 }

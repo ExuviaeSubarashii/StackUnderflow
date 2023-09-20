@@ -23,15 +23,19 @@ namespace SUAPI.Controllers
         }
         [HttpGet]
         [Route("GetAllMyPosts")]
-        public async Task<ActionResult> GetAllMyPosts(string userName)
+        public async Task<ActionResult> GetAllMyPosts(string userName, CancellationToken cancellationToken)
         {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return StatusCode(499, "Request was cancelled by the server.");
+            }
             var userPosts = await _SU.UserPosts.Where(x => x.PosterName == userName).ToListAsync();
             return new JsonResult(userPosts);
         }
         [HttpGet("Questions")]
-        public async Task<ActionResult> Questions(int postId)
+        public async Task<ActionResult> Questions(int postId, CancellationToken cancellationToken)
         {
-            var post = await _SU.UserPosts.FirstOrDefaultAsync(x => x.Id == postId);
+            var post = await _SU.UserPosts.FirstOrDefaultAsync(x => x.Id == postId, cancellationToken);
 
             if (post != null)
             {
@@ -44,8 +48,12 @@ namespace SUAPI.Controllers
         }
         [HttpPost]
         [Route("NewPost")]
-        public ActionResult AddNewPost(NewPostRequest request)
+        public ActionResult AddNewPost(NewPostRequest request, CancellationToken cancellationToken)
         {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return StatusCode(499, "Request was cancelled by the server.");
+            }
             if (request != null)
             {
                 UserPost newPost = new UserPost()
@@ -69,7 +77,7 @@ namespace SUAPI.Controllers
         //gonderi silindiginde o post idsindeki yorumlari da sil
         [HttpPost]
         [Route("DeletePost")]
-        public ActionResult DeletePost([FromBody] DeletePostRequest DPR)
+        public async Task<ActionResult> DeletePost([FromBody] DeletePostRequest DPR)
         {
             var doesPostExist = _SU.UserPosts.Any(x => x.Id == DPR.PostId);
             var postContent = _SU.UserPosts.FirstOrDefault(x => x.Id == DPR.PostId);

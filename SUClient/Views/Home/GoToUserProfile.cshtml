@@ -1,4 +1,78 @@
-﻿<div id="content">
+﻿<style>
+    /* Styling for the content body */
+    .content-body {
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Styling for the comment ID */
+    .comment-id {
+        visibility: hidden;
+    }
+
+    /* Styling for the "Link to Question" button */
+    .post-href {
+        display: inline-block;
+        padding: 6px 12px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+    }
+
+        .post-href:hover {
+            background-color: #0056b3;
+        }
+
+    /* Styling for the commenter's name */
+    .commenter-name {
+        font-size: 16px;
+        color: #666;
+        margin-top: 10px;
+    }
+
+    /* Styling for the comment date */
+    .comment-date {
+        font-size: 16px;
+        color: #666;
+        margin-top: 10px;
+    }
+
+    /* Styling for the comment header */
+    .comment-header {
+        font-size: 16px;
+        color: #666;
+        margin-top: 10px;
+    }
+
+    /* Styling for the main content */
+    .main-content {
+        font-size: 24px;
+        color: #333;
+        margin: 0;
+    }
+
+    /* Styling for the poster's name */
+    .poster-name {
+        font-size: 16px;
+        color: #666;
+        margin-top: 10px;
+    }
+
+    /* Styling for the tags */
+    .tags {
+        font-size: 16px;
+        color: #666;
+        margin-top: 10px;
+    }
+
+</style>
+<div id="content">
 
     <div id="user-content">
 
@@ -9,7 +83,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         GetUserDetails();
-        GetUserComments();
     });
+
 
 </script>
