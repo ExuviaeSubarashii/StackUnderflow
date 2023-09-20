@@ -224,7 +224,7 @@ function GetUserComments() {
             var deletecommentButton = document.createElement('button');
             deletecommentButton.setAttribute('id', 'deletecommentbutton');
             deletecommentButton.classList.add('deletecomment-button');
-            deletecommentButton.textContent = "Delete Comment";
+            deletecommentButton.textContent = "Delete Comment ";
             contentBody.appendChild(commentId);
             contentBody.appendChild(postHref);
             contentBody.appendChild(commenterName);
