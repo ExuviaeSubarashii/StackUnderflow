@@ -1,5 +1,5 @@
 ﻿function AuthUserAutomatically() {
-    const userToken = localStorage.getItem('usertoken')|| undefined;
+    const userToken = localStorage.getItem('usertoken') || undefined;
     if (userToken !== undefined) {
         const user = {
             Token: userToken
@@ -125,7 +125,7 @@ function Register() {
         method: 'POST',
         body: JSON.stringify(registeration),
         headers: {
-            'Content-Type': 'application/json' 
+            'Content-Type': 'application/json'
         }
     };
     if (registeration.password === registeration.passwordAgain) {
@@ -172,12 +172,12 @@ function ChangePassword() {
                     throw new Error(response.statusText);
                 }
             })
-            //.then(data => {
-            //    localStorage.setItem('usertoken', data.token);
-            //})
-            //.catch(error => {
-            //    console.error('Error occurred while sending the request:', error);
-            //});
+        //.then(data => {
+        //    localStorage.setItem('usertoken', data.token);
+        //})
+        //.catch(error => {
+        //    console.error('Error occurred while sending the request:', error);
+        //});
     }
 
 }
@@ -185,6 +185,7 @@ function GoToMyProfile() {
     GoToThatPage('GoToUserProfile?username=' + localStorage.getItem('userName'));
 }
 function GetUserComments() {
+    showLoadingScreen();
     const username = urlParams.get('username');
     const mainContent = document.getElementById('main-content');
     fetch(`${baseURL}/User/GetUserComments` + '?username=' + username, {
@@ -198,19 +199,21 @@ function GetUserComments() {
         .then(data => {
             data.forEach(item => {
                 const contentBody = document.createElement('div');
+                contentBody.setAttribute("id", "contentBody");
                 contentBody.classList.add('content-body'); // Add a class to contentBody
 
                 const commentId = document.createElement('a');
                 commentId.classList.add('comment-id'); // Add a class to commentId
                 commentId.style.visibility = 'hidden';
+                commentId.setAttribute('id', 'commentId');
                 commentId.textContent = item.commentId;
 
                 const postHref = document.createElement('a');
                 postHref.classList.add('post-href'); // Add a class to postHref
                 postHref.href = `/Home/Questions?postId=${encodeURIComponent(item.postId)}`;
+                postHref.textContent = "View Post";
 
-                const gotopostButton = document.createElement('button');
-                gotopostButton.classList.add('gotopost-button'); // Add a class to gotopostButton
+                
 
                 const commenterName = document.createElement('p');
                 commenterName.classList.add('commenter-name'); // Add a class to commenterName
@@ -234,19 +237,59 @@ function GetUserComments() {
 
                 const tags = document.createElement("p");
                 tags.classList.add('tags'); // Add a class to tags
-                tags.textContent = item.tags;
+                tags.textContent = `Tags: ` + item.tags;
+
+                const deletecommentButton = document.createElement('button');
+                deletecommentButton.setAttribute('id', 'deletecommentbutton');
+                deletecommentButton.classList.add('deletecomment-button');
+                deletecommentButton.textContent = "Delete Comment";
 
                 contentBody.appendChild(commentId);
                 contentBody.appendChild(postHref);
-                contentBody.appendChild(gotopostButton);
                 contentBody.appendChild(commenterName);
                 contentBody.appendChild(commentDate);
                 contentBody.appendChild(commentHeader);
                 contentBody.appendChild(mainContentItem); // Use the new variable here
                 contentBody.appendChild(posterName);
                 contentBody.appendChild(tags);
+                contentBody.appendChild(deletecommentButton);
 
                 mainContent.appendChild(contentBody); // Append contentBody to mainContent
+                hideLoadingScreen();
             })
+
         })
+    
 }
+
+function DeleteComment(commentId: number) {
+    var userToken = localStorage.getItem("usertoken");
+    if (!userToken) {
+        console.error("User token not found in localStorage");
+        return;
+    }
+    if (isNaN(commentId)) {
+        console.error("Invalid commentId:", commentId);
+        return;
+    }
+
+    console.log(commentId + userToken);
+}
+document.addEventListener("DOMContentLoaded", function () {
+    const deletecommentbutton = document.getElementById('deletecommentbutton');
+    if (deletecommentbutton) {
+        const contentBody = document.getElementById("contentBody");
+        const commentIdElement = contentBody?.querySelector('#commentId') as HTMLParagraphElement;
+
+        if (commentIdElement) {
+            var commentId = parseInt(commentIdElement.textContent || '0', 10);
+            deletecommentbutton.addEventListener("click", () => {
+                DeleteComment(commentId);
+            });
+        } else {
+            console.error("Comment ID element not found");
+        }
+    } else {
+        console.error("Delete comment button not found");
+    }
+});

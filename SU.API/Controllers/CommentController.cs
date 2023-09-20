@@ -84,6 +84,22 @@ namespace SUAPI.Controllers
                 return new List<Comment>();
             }
         }
+        [HttpPost("DeleteOwnedComment")]
+        public async Task<ActionResult> DeleteOwnedComment(string userToken, int commentId)
+        {
+            var AreYouTheUser = _SU.Users.FirstOrDefault(x => x.UserToken == userToken);
+            var DoYouOwnTheComment = _SU.Comments.Where(x => x.CommentId == commentId).FirstOrDefault();
+            if (AreYouTheUser.UserEmail == DoYouOwnTheComment.CommenterName)
+            {
+                _SU.Comments.Remove(DoYouOwnTheComment);
+                _SU.SaveChanges();
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
 
 
     }

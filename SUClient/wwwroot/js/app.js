@@ -79,7 +79,7 @@ function GetUserDetails() {
         joinDate.textContent = data.registerDate;
         userContent.appendChild(userName);
         userContent.appendChild(joinDate);
-        setTimeout(GetUserComments, 4000);
+        setTimeout(GetUserComments, 2000);
     })
         .catch(function (error) {
         console.error('Error occurred while sending the request:', error);

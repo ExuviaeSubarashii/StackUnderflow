@@ -98,7 +98,7 @@ function GetUserDetails() {
 
             userContent.appendChild(userName);
             userContent.appendChild(joinDate);
-            setTimeout(GetUserComments, 4000);
+            setTimeout(GetUserComments, 2000);
         })
         
         .catch(function (error) {
