@@ -1,0 +1,86 @@
+﻿<style>
+    /* Styling for the question summary container */
+    .questionSummary {
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Styling for the content title */
+    .contentTitle {
+        font-size: 24px;
+        color: #333;
+        margin: 0;
+    }
+
+    /* Styling for the content body */
+    .contentBody {
+        font-size: 16px;
+        color: #666;
+        margin-top: 10px;
+    }
+
+    /* Styling for the "Link to Question" button */
+    .posthref {
+        display: inline-block;
+        padding: 6px 12px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+    }
+
+        .posthref:hover {
+            background-color: #0056b3;
+        }
+
+    /* Styling for the user card */
+    .userCard {
+        display: flex;
+        align-items: center;
+        margin-top: 15px;
+    }
+
+    /* Styling for the user link */
+    .userHref {
+        text-decoration: none;
+        color: #007bff;
+        font-weight: bold;
+    }
+
+    /* Styling for the post date */
+    .postDate {
+        font-size: 14px;
+        color: #999;
+        margin-top: 10px;
+    }
+
+</style>
+<body onload="initPage()">
+
+<div id="mainBar">
+    <h1 class="flex--item fl1 fs-headline1 mr12 mb12">All Questions</h1>
+
+    <div class="aside-cta flex--item mb12 print:d-none">
+        @* <a onclick="GoToAskPage()" class="ws-nowrap s-btn s-btn__primary">
+        Ask Question
+        </a> *@
+        <button type="submit" onclick="GoToAskPage()" class="ws-nowrap s-btn s-btn__primary">
+            Ask Question
+        </button>
+    </div>
+
+    <div id="questions" class="flush-left">
+    </div>
+</div>
+</body>
+<script>
+    function initPage() {
+        Tagged();
+        AuthUserKindaAutomatically();
+    }
+</script>

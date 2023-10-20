@@ -19,27 +19,12 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ol class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <button class="nav-link text-dark" id="loginpagebutton" onclick="GoToThatPage('LoginPage')">Log in</button>
-                        <li class="nav-item">
-                            <button class="nav-link text-dark" id="registerpagebutton" onclick="GoToThatPage('Register')">Sign Up</button>
-                        </li>
-
+                    <button class="nav-link text-dark" id="loginpagebutton" onclick="GoToThatPage('LoginPage')">Log in</button>
+                    <li class="nav-item">
+                        <button class="nav-link text-dark" id="registerpagebutton" onclick="GoToThatPage('Register')">Sign Up</button>
+                    </li>
+                    
                     </ol>
-
-
-                    @*   <button onclick="logout()">
-                    clear
-                    </button>
-                    <button onclick="ShowLocalStorage()">
-                    show
-                    </button> *@
-
                     <div class="userPanel">
                         <div class="dropdown">
                             Welcome, <span id="userloginname"></span>!
@@ -54,18 +39,15 @@
             </div>
         </nav>
     </header>
-    <ol>
-        <li>
-            <button onclick="GoToThatPage('')">Questions</button>
-        </li>
-        <li>
-            <button>Tags</button>
-        </li>
-        <li>
-            <button>Users</button>
-        </li>
-
-    </ol>
+    <div class="sidenav">
+        <br />
+        <a onclick="GoToThatPage('')">Questions</a>
+        <br />
+        <a onclick="GoToThatPage('Tags')">Tags</a>
+        <br />
+        <a>Users</a>
+        <br />
+    </div>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -84,6 +66,7 @@
     <script src="~/js/ask.js" asp-append-version="true"></script>
     <script src="~/js/user.js" asp-append-version="true"></script>
     <script src="~/js/loadingactions.js" asp-append-version="true"></script>
+    <script src="~/js/tags.js" asp-append-version="true"></script>
 
 
 

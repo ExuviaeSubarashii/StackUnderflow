@@ -45,6 +45,14 @@ namespace SUClient.Controllers
         {
             return View("Register");
         }
+        public IActionResult Tags()
+        {
+            return View("Tags");
+        }
+        public IActionResult Tagged()
+        {
+            return View("Tagged");
+        }
         public IActionResult ChangePassword()
         {
             return View("ChangePassword");

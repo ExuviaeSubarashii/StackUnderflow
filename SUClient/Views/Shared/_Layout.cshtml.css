@@ -62,6 +62,7 @@ button.accept-policy {
     right: 10px;
     z-index: 9999;
 }
+
 .dropdown-content {
     display: none;
     position: absolute;
@@ -72,6 +73,7 @@ button.accept-policy {
     top: 100%;
     right: 0;
 }
+
     .dropdown-content p {
         color: #333;
         padding: 10px;
@@ -87,4 +89,43 @@ button.accept-policy {
 
 .dropdown:hover .dropdown-content {
     display: block;
+}
+
+.sidenav {
+    height: 100%;
+    width: 160px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+
+    .sidenav a {
+        padding: 6px 8px 6px 16px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #818181;
+        display: block;
+    }
+
+        .sidenav a:hover {
+            color: #f1f1f1;
+        }
+
+.main {
+    margin-left: 160px;
+    padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {
+        padding-top: 15px;
+    }
+
+        .sidenav a {
+            font-size: 18px;
+        }
 }

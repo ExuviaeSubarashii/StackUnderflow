@@ -16,6 +16,7 @@ namespace SU.Domain.Models
         public virtual DbSet<Comment> Comments { get; set; } = null!;
         public virtual DbSet<Users> Users { get; set; } = null!;
         public virtual DbSet<UserPost> UserPosts { get; set; } = null!;
+        public virtual DbSet<Tag> Tags { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -99,6 +100,17 @@ namespace SU.Domain.Models
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .IsFixedLength();
+            });
+            modelBuilder.Entity<Tag>(entity =>
+            {
+                entity.ToTable("Tag");
+
+                entity.Property(e => e.TagName)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .IsFixedLength();
+
+                entity.Property(e => e.TagAmount);
             });
 
             OnModelCreatingPartial(modelBuilder);
