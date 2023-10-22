@@ -43,6 +43,7 @@ function AuthUserKindaAutomatically() {
     if (isLoggedIn == "true") {
         document.getElementById('loginpagebutton').style.display = 'none';
         document.getElementById('registerpagebutton').style.display = 'none';
+        document.getElementById('userPanel').style.display = 'block';
     }
 }
 function login() {

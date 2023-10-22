@@ -9,37 +9,7 @@
     <link rel="stylesheet" href="~/SUClient.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SUClient</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ol class="navbar-nav flex-grow-1">
-                    <button class="nav-link text-dark" id="loginpagebutton" onclick="GoToThatPage('LoginPage')">Log in</button>
-                    <li class="nav-item">
-                        <button class="nav-link text-dark" id="registerpagebutton" onclick="GoToThatPage('Register')">Sign Up</button>
-                    </li>
-                    
-                    </ol>
-                    <div class="userPanel">
-                        <div class="dropdown">
-                            Welcome, <span id="userloginname"></span>!
-                            <div class="dropdown-content">
-                                <p id="userNotif" class="userNotif" onclick="GoToMyProfile()">Profile</p>
-                                <p id="userActions" class="userActions" onclick="GoToThatPage('ChangePassword')">ChangePassword</p>
-                                <p id="userAccount" class="userAccount" onclick="logout()">Logout</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="sidenav">
+    <div class="sidenav gap-5">
         <br />
         <a onclick="GoToThatPage('')">Questions</a>
         <br />
@@ -47,6 +17,19 @@
         <br />
         <a>Users</a>
         <br />
+        <a class="nav-link text-white" id="loginpagebutton" onclick="GoToThatPage('LoginPage')">Log in</a>
+        <a class="nav-link text-white" id="registerpagebutton" onclick="GoToThatPage('Register')">Sign Up</a>
+
+        <div id="userPanel" class="userPanel">
+            <div class="dropdown text-white">
+                Welcome, <span id="userloginname"></span>!
+                <div class="dropdown-content">
+                    <a id="userNotif" class="userNotif text-black" onclick="GoToMyProfile()">Profile</a>
+                    <a id="userActions" class="userActions text-black" onclick="GoToThatPage('ChangePassword')">ChangePassword</a>
+                    <label id="userAccount" class="userAccount text-black" onclick="logout()">Logout</label>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="container">
         <main role="main" class="pb-3">
@@ -74,11 +57,9 @@
 </body>
 </html>
 <script>
-
     document.addEventListener("DOMContentLoaded", function () {
         AuthUserKindaAutomatically();
         var userName = localStorage.getItem('userName');
-
         if (userName) {
             // Set the text content of the element with the ID "userloginname"
             document.getElementById('userloginname').textContent = userName;

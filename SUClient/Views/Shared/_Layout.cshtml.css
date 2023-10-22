@@ -57,10 +57,7 @@ button.accept-policy {
 }
 
 .userPanel {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    z-index: 9999;
+   display:none;
 }
 
 .dropdown-content {
@@ -106,7 +103,7 @@ button.accept-policy {
     .sidenav a {
         padding: 6px 8px 6px 16px;
         text-decoration: none;
-        font-size: 25px;
+        /*font-size: 25px;*/
         color: #818181;
         display: block;
     }
