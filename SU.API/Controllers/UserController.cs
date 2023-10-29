@@ -5,6 +5,7 @@ using SU.Domain.Models;
 using SU.Service;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Threading;
 
 namespace SUAPI.Controllers
 {
@@ -14,6 +15,8 @@ namespace SUAPI.Controllers
     {
         private readonly StackUnderflowContext _SU;
         private readonly IConfiguration _config;
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private CancellationToken _cancellationToken => _cancellationTokenSource.Token;
         public UserController(StackUnderflowContext SU, IConfiguration configuration)
         {
             _SU = SU;
@@ -22,40 +25,64 @@ namespace SUAPI.Controllers
         [HttpPost("Login")]
         public async Task<ActionResult> Login([FromBody] LoginRequest request)
         {
-            var loginQuery = _SU.Users.Any(x => x.UserName == request.UserName || x.UserEmail == request.UserEmail && x.Password == request.Password);
-
-            var userAuthQuery = _SU.Users.Where(x => x.UserName == request.UserName || x.UserEmail == request.UserEmail && x.Password == request.Password).FirstOrDefault();
-
-            if (loginQuery)
+            try
             {
-                UserAuthDto userAuthDto = new UserAuthDto()
+                _cancellationToken.ThrowIfCancellationRequested();
+
+
+                var loginQuery = _SU.Users.Any(x => x.UserName == request.UserName || x.UserEmail == request.UserEmail && x.Password == request.Password);
+
+                var userAuthQuery = _SU.Users.Where(x => x.UserName == request.UserName || x.UserEmail == request.UserEmail && x.Password == request.Password).FirstOrDefault();
+
+                if (loginQuery)
                 {
-                    EncEmail = request.UserEmail,
-                    Token = userAuthQuery.UserToken,
-                    UserName = userAuthQuery.UserName,
-                };
-                return new JsonResult(userAuthDto);
+                    UserAuthDto userAuthDto = new UserAuthDto()
+                    {
+                        EncEmail = request.UserEmail,
+                        Token = userAuthQuery.UserToken,
+                        UserName = userAuthQuery.UserName,
+                    };
+                    return new JsonResult(userAuthDto);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
-            else
+            catch (OperationCanceledException)
             {
-                return NotFound();
+
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
+
             }
         }
         [HttpPost("AuthUser")]
         public async Task<ActionResult> AuthUser([FromBody] LoginRequest request)
         {
-            var query = _SU.Users.Any(x => x.UserToken == request.Token);
-            if (query)
+            try
             {
-                UserAuthDto userAuthDto = new UserAuthDto()
+                _cancellationToken.ThrowIfCancellationRequested();
+
+
+                var query = _SU.Users.Any(x => x.UserToken == request.Token);
+                if (query)
                 {
-                    Token = request.Token
-                };
-                return new JsonResult(userAuthDto);
+                    UserAuthDto userAuthDto = new UserAuthDto()
+                    {
+                        Token = request.Token
+                    };
+                    return new JsonResult(userAuthDto);
+                }
+                else
+                {
+                    return BadRequest();
+                }
             }
-            else
+            catch (OperationCanceledException)
             {
-                return BadRequest();
+
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
+
             }
         }
         public string CreateToken(LoginRequest request)
@@ -154,51 +181,63 @@ namespace SUAPI.Controllers
             }
         }
         [HttpGet("GetUserComments")]
-        public async Task<JsonResult> GetUserComments(string? username)
+        public async Task<ActionResult> GetUserComments(string? username)
         {
-            var commentQuery = _SU.Comments.Where(x => x.CommenterName == username).ToList();
-            int[] postIdArray = new int[commentQuery.Count];
-            int[] commentIdArray = new int[commentQuery.Count];
-            int postindex = 0;
-            int commentindex = 0;
-
-            foreach (var comment in commentQuery)
+            try
             {
-                postIdArray[postindex] = comment.PostId;
-                commentIdArray[commentindex] = comment.CommentId;
-                postindex++;
-                commentindex++;
-            }
-            List<UserProfileCommentsDTO> userCommentList = new List<UserProfileCommentsDTO>();
-            for (int i = 0; i < commentQuery.Count; i++)
-            {
-                var postQuery = _SU.UserPosts.FirstOrDefault(x => x.Id == postIdArray[i]);
-                var userCommentQuery = _SU.Comments.FirstOrDefault(x => x.CommentId == commentIdArray[i]);
+                _cancellationToken.ThrowIfCancellationRequested();
 
-                UserProfileCommentsDTO UPC = new UserProfileCommentsDTO()
+
+                var commentQuery = _SU.Comments.Where(x => x.CommenterName == username).ToList();
+                int[] postIdArray = new int[commentQuery.Count];
+                int[] commentIdArray = new int[commentQuery.Count];
+                int postindex = 0;
+                int commentindex = 0;
+
+                foreach (var comment in commentQuery)
                 {
-                    PostId = postIdArray[i],
-                    CommentId = commentIdArray[i],
-                    CommenterName = userCommentQuery.CommenterName.Trim(),
-                    CommentDate = userCommentQuery.CommentDate,
-                    CommentContent = userCommentQuery.CommentContent.Trim(),
-                    Header = postQuery.Header.Trim(),
-                    MainContent = postQuery.MainContent.Trim(),
-                    Image = postQuery.Image,
-                    PostDate = postQuery.PostDate,
-                    PosterName = postQuery.PosterName.Trim(),
-                    Tags = postQuery.Tags.Trim(),
-                };
-                userCommentList.Add(UPC);
-            }
+                    postIdArray[postindex] = comment.PostId;
+                    commentIdArray[commentindex] = comment.CommentId;
+                    postindex++;
+                    commentindex++;
+                }
+                List<UserProfileCommentsDTO> userCommentList = new List<UserProfileCommentsDTO>();
+                for (int i = 0; i < commentQuery.Count; i++)
+                {
+                    var postQuery = _SU.UserPosts.FirstOrDefault(x => x.Id == postIdArray[i]);
+                    var userCommentQuery = _SU.Comments.FirstOrDefault(x => x.CommentId == commentIdArray[i]);
 
-            if (userCommentList.Count > 0)
-            {
-                return new JsonResult(userCommentList.ToList());
+                    UserProfileCommentsDTO UPC = new UserProfileCommentsDTO()
+                    {
+                        PostId = postIdArray[i],
+                        CommentId = commentIdArray[i],
+                        CommenterName = userCommentQuery.CommenterName.Trim(),
+                        CommentDate = userCommentQuery.CommentDate,
+                        CommentContent = userCommentQuery.CommentContent.Trim(),
+                        Header = postQuery.Header.Trim(),
+                        MainContent = postQuery.MainContent.Trim(),
+                        Image = postQuery.Image,
+                        PostDate = postQuery.PostDate,
+                        PosterName = postQuery.PosterName.Trim(),
+                        Tags = postQuery.Tags.Trim(),
+                    };
+                    userCommentList.Add(UPC);
+                }
+
+                if (userCommentList.Count > 0)
+                {
+                    return new JsonResult(userCommentList.ToList());
+                }
+                else
+                {
+                    return new JsonResult(Enumerable.Empty<UserProfileCommentsDTO>());
+                }
             }
-            else
+            catch (OperationCanceledException)
             {
-                return new JsonResult(Enumerable.Empty<UserProfileCommentsDTO>());
+
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
+
             }
         }
     }

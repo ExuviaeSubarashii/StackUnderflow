@@ -9,6 +9,8 @@ namespace SUAPI.Controllers
     public class CommentController : ControllerBase
     {
         private readonly StackUnderflowContext _SU;
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private CancellationToken _cancellationToken => _cancellationTokenSource.Token;
         public CommentController(StackUnderflowContext SU)
         {
             _SU = SU;
@@ -61,16 +63,28 @@ namespace SUAPI.Controllers
         }
         [HttpGet]
         [Route("GetAllMyCommentedPosts")]
-        public List<Comment> GetComments(string userName)
+        public async Task<ActionResult> GetComments(string userName)
         {
             try
             {
-                return _SU.Comments.Where(x => x.CommenterName == userName).ToList();
+                _cancellationToken.ThrowIfCancellationRequested();
+
+                var getCommentQuery = _SU.Comments.Where(x => x.CommenterName == userName).ToList();
+                if (getCommentQuery != null)
+                {
+                    return Ok(getCommentQuery);
+                }
+                else
+                {
+                    return Ok(new List<Comment>());
+                }
             }
-            catch (Exception)
+            catch (OperationCanceledException)
             {
-                return new List<Comment>();
+
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
             }
+
         }
         [HttpGet("PostSpecificComments")]
         public List<Comment> PostSpecificComments(int postId)

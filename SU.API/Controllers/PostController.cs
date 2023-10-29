@@ -10,6 +10,8 @@ namespace SUAPI.Controllers
     public class PostController : ControllerBase
     {
         private readonly StackUnderflowContext _SU;
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private CancellationToken _cancellationToken => _cancellationTokenSource.Token;
         public PostController(StackUnderflowContext SU)
         {
             _SU = SU;
@@ -18,32 +20,62 @@ namespace SUAPI.Controllers
         [Route("GetAllPosts")]
         public async Task<ActionResult> GetAllPosts()
         {
-            var gap = await _SU.UserPosts.ToListAsync();
-            return new JsonResult(gap);
+            try
+            {
+                _cancellationToken.ThrowIfCancellationRequested();
+
+
+                var gap = await _SU.UserPosts.ToListAsync();
+                return new JsonResult(gap);
+            }
+            catch (OperationCanceledException)
+            {
+
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
+
+            }
         }
         [HttpGet]
         [Route("GetAllMyPosts")]
         public async Task<ActionResult> GetAllMyPosts(string userName, CancellationToken cancellationToken)
         {
-            if (cancellationToken.IsCancellationRequested)
+            try
             {
-                return StatusCode(499, "Request was cancelled by the server.");
+                _cancellationToken.ThrowIfCancellationRequested();
+                var userPosts = await _SU.UserPosts.Where(x => x.PosterName == userName).ToListAsync();
+                return new JsonResult(userPosts);
             }
-            var userPosts = await _SU.UserPosts.Where(x => x.PosterName == userName).ToListAsync();
-            return new JsonResult(userPosts);
+            catch (OperationCanceledException)
+            {
+
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
+
+            }
         }
         [HttpGet("Questions")]
-        public async Task<ActionResult> Questions(int postId, CancellationToken cancellationToken)
+        public async Task<ActionResult> Questions(int postId)
         {
-            var post = await _SU.UserPosts.FirstOrDefaultAsync(x => x.Id == postId, cancellationToken);
+            try
+            {
+                _cancellationToken.ThrowIfCancellationRequested();
 
-            if (post != null)
-            {
-                return new JsonResult(post);
+
+                var post = await _SU.UserPosts.FirstOrDefaultAsync(x => x.Id == postId);
+
+                if (post != null)
+                {
+                    return new JsonResult(post);
+                }
+                else
+                {
+                    return NotFound(); // Return a 404 response if the post is not found
+                }
             }
-            else
+            catch (OperationCanceledException)
             {
-                return NotFound(); // Return a 404 response if the post is not found
+
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
+
             }
         }
         [HttpPost]

@@ -8,6 +8,8 @@ namespace SUAPI.Controllers
     public class TagsController : ControllerBase
     {
         private readonly StackUnderflowContext _SU;
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private CancellationToken _cancellationToken => _cancellationTokenSource.Token;
         public TagsController(StackUnderflowContext SU)
         {
             _SU = SU;
@@ -44,29 +46,48 @@ namespace SUAPI.Controllers
         [HttpGet("GetTags")]
         public async Task<ActionResult> GetTags()
         {
-            List<Tag> tags = _SU.Tags.ToList();
-            if (tags != null)
+            try
             {
-                return Ok(tags);
+                _cancellationToken.ThrowIfCancellationRequested();
+
+                List<Tag> tags = _SU.Tags.ToList();
+                if (tags != null)
+                {
+                    return Ok(tags);
+                }
+                else
+                {
+                    return Ok(new List<Tag>());
+                }
             }
-            else
+            catch (OperationCanceledException)
             {
-                return Ok(new List<Tag>());
+
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
+
             }
         }
         [HttpGet("GetTagged")]
         public async Task<ActionResult> GetTagged(string tagName)
         {
-            var tagList = _SU.UserPosts.Where(x => x.Tags == tagName.Trim()).ToList();
-            if (tagList != null)
+            try
             {
-                return new JsonResult(tagList);
-            }
-            else
-            {
-                return new JsonResult(new List<Tag>());
-            }
+                _cancellationToken.ThrowIfCancellationRequested();
 
+                var tagList = _SU.UserPosts.Where(x => x.Tags == tagName.Trim()).ToList();
+                if (tagList != null)
+                {
+                    return new JsonResult(tagList);
+                }
+                else
+                {
+                    return new JsonResult(new List<Tag>());
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Operation was canceled.");
+            }
         }
     }
 }

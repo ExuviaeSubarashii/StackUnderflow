@@ -27,7 +27,7 @@
             const tagAmount=document.createElement("label");
             tagAmount.setAttribute("id", "tagAmount");
             tagAmount.classList.add('tagAmount');
-            tagAmount.textContent=tag.tagAmount;
+            tagAmount.textContent=`${tag.tagAmount} posts`;
 
             contentBody.append(tagName);
             contentBody.append(tagAmount);

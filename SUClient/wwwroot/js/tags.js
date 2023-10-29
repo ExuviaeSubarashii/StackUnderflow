@@ -64,7 +64,7 @@ function GetTags() {
                                 var tagAmount = document.createElement("label");
                                 tagAmount.setAttribute("id", "tagAmount");
                                 tagAmount.classList.add('tagAmount');
-                                tagAmount.textContent = tag.tagAmount;
+                                tagAmount.textContent = "".concat(tag.tagAmount, " posts");
                                 contentBody.append(tagName);
                                 contentBody.append(tagAmount);
                                 tagbody.appendChild(contentBody);
